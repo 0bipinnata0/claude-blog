@@ -171,6 +171,23 @@ export class CommentsComponent implements OnDestroy {
 
       // Handle errors
       if (giscusData.error) {
+        const errorData = giscusData.error;
+        const errorMessage = typeof errorData === 'string'
+          ? errorData.toLowerCase()
+          : (errorData.message || JSON.stringify(errorData)).toLowerCase();
+
+        // If the discussion is not found, it means it's a new post.
+        // Giscus handles this by showing "Write a comment" (if enabled) or just 0 comments.
+        // We should treat this as a successful load.
+        if (errorMessage.includes('not found') || errorMessage.includes('404')) {
+          this.loading.set(false);
+          this.errorState.set(false);
+          if (this.loadTimeout) {
+            window.clearTimeout(this.loadTimeout);
+          }
+          return;
+        }
+
         this.handleError('Unable to load comments. The discussion may not exist yet or the repository configuration is incorrect.');
       }
     };

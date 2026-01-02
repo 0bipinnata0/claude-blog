@@ -1,4 +1,3 @@
-
 // Include theming for Angular Material with `mat.theme()`.
 // This Sass mixin will define CSS variables that are used for styling Angular Material
 // components according to the Material 3 design spec.
@@ -15,14 +14,12 @@
 
 html {
   height: 100%;
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
+  @include mat.theme((color: (primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    ));
 }
 
 body {
@@ -72,7 +69,8 @@ pre[class*="language-"] {
   border-radius: 8px;
   margin: 1.5rem 0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding-top: 3rem !important; /* Space for title bar */
+  padding-top: 3rem !important;
+  /* Space for title bar */
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
   font-size: 0.875rem;
   line-height: 1.6;
@@ -86,11 +84,9 @@ pre[class*="language-"]::before {
   left: 0;
   right: 0;
   height: 2.5rem;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0.02)
-  );
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.02));
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px 8px 0 0;
 }
@@ -104,10 +100,13 @@ pre[class*="language-"]::after {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #ff5f56; /* Red dot */
+  background: #ff5f56;
+  /* Red dot */
   box-shadow:
-    20px 0 0 #ffbd2e, /* Yellow dot */
-    40px 0 0 #27c93f, /* Green dot */
+    20px 0 0 #ffbd2e,
+    /* Yellow dot */
+    40px 0 0 #27c93f,
+    /* Green dot */
     0 0 0 1px rgba(0, 0, 0, 0.1),
     20px 0 0 1px rgba(0, 0, 0, 0.1),
     40px 0 0 1px rgba(0, 0, 0, 0.1);
@@ -115,11 +114,9 @@ pre[class*="language-"]::after {
 
 /* Dark mode adjustments for code blocks */
 html.dark pre[class*="language-"]::before {
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.03),
-    rgba(255, 255, 255, 0.01)
-  );
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.03),
+      rgba(255, 255, 255, 0.01));
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -161,44 +158,71 @@ html.dark .mermaid {
   filter: invert(0.9) hue-rotate(180deg);
 }
 
-/* Spotlight Effect - Premium Hover Glow */
+/* Spotlight Effect - Velvet Aurora */
 [appSpotlight] {
   position: relative;
   overflow: hidden;
+  /* Hardware acceleration for smoother rendering */
+  transform: translateZ(0);
 }
 
+/* 1. Ambient Aurora Glow (Background) */
 [appSpotlight]::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 1;
   opacity: 0;
-  background: radial-gradient(
-    800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(255, 255, 255, 0.15),
-    transparent 40%
-  );
+  /* Multi-colored soft gradient using theme colors */
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(var(--mat-sys-primary-rgb, 50, 100, 255), 0.08),
+      rgba(var(--mat-sys-tertiary-rgb, 100, 200, 255), 0.05) 40%,
+      transparent 70%);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  /* Add subtle texture/noise if desired, or keep it smooth for 'Velvet' feel */
+}
+
+/* 2. Defined Border Highlight (Foreground) */
+[appSpotlight]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  /* Sharp, thin border glow */
+  background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(255, 255, 255, 0.1),
+      transparent 40%);
+  /* Use mask to only show on border (optional, simpler to just have top overlay) */
+  /* For now, a subtle top sheen is nice */
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
 
-[appSpotlight]:hover::before {
+[appSpotlight]:hover::before,
+[appSpotlight]:hover::after {
   opacity: 1;
 }
 
-/* Dark mode spotlight - slightly more visible */
+/* Dark mode adjustment - slightly more vibrancy */
 html.dark [appSpotlight]::before {
-  background: radial-gradient(
-    800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(255, 255, 255, 0.2),
-    transparent 40%
-  );
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(var(--mat-sys-primary-rgb, 100, 150, 255), 0.12),
+      rgba(var(--mat-sys-tertiary-rgb, 150, 220, 255), 0.08) 40%,
+      transparent 70%);
 }
 
-/* Ensure card content stays above the spotlight */
-[appSpotlight] > * {
+html.dark [appSpotlight]::after {
+  background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(255, 255, 255, 0.15),
+      transparent 40%);
+}
+
+/* Ensure card content stays above the spotlight layers */
+[appSpotlight]>* {
   position: relative;
-  z-index: 2;
+  z-index: 3;
 }
 
 /* GitHub-style Admonitions */

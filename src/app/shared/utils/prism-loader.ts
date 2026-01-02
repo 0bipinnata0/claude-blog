@@ -32,11 +32,9 @@ export async function loadPrism(): Promise<void> {
     import('prismjs/components/prism-sql'),
   ]);
 
-  // Step 4: Load plugins last
-  await Promise.all([
-    import('prismjs/plugins/toolbar/prism-toolbar'),
-    import('prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard'),
-  ]);
+  // Step 4: Load plugins last (sequentially to handle dependencies)
+  await import('prismjs/plugins/toolbar/prism-toolbar');
+  await import('prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard');
 
   prismLoaded = true;
 }

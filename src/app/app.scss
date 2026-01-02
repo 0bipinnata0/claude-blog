@@ -1,0 +1,65 @@
+/* Prism Code Block Toolbar Customization */
+div.code-toolbar {
+    position: relative;
+
+    >.toolbar {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+        /* Prevent blocking clicks when invisible */
+    }
+
+    &:hover>.toolbar {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .toolbar-item {
+        margin-left: 8px;
+
+        /* Custom Copy Button */
+        button.copy-to-clipboard-button {
+            appearance: none;
+            background: var(--mat-sys-surface-container);
+            border: 1px solid var(--mat-sys-outline-variant);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 6px;
+            min-width: 32px;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0 !important;
+            /* Hide default text */
+            color: var(--mat-sys-on-surface-variant) !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+            /* Icon using Material Icons */
+            &::before {
+                font-family: 'Material Icons';
+                content: '\\e14d';
+                /* content_copy */
+                font-size: 18px;
+                display: block;
+            }
+
+            &:hover {
+                background: var(--mat-sys-primary-container);
+                color: var(--mat-sys-on-primary-container) !important;
+                border-color: var(--mat-sys-primary);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+            }
+
+            &:active {
+                transform: translateY(0);
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+            }
+        }
+    }
+}

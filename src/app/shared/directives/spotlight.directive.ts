@@ -8,12 +8,12 @@ export class SpotlightDirective implements OnInit {
   constructor(
     private el: ElementRef,
     private renderer: Renderer2
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Initialize CSS variables
-    this.renderer.setStyle(this.el.nativeElement, '--mouse-x', '0px');
-    this.renderer.setStyle(this.el.nativeElement, '--mouse-y', '0px');
+    this.el.nativeElement.style.setProperty('--mouse-x', '0px');
+    this.el.nativeElement.style.setProperty('--mouse-y', '0px');
   }
 
   @HostListener('mousemove', ['$event'])
@@ -25,15 +25,15 @@ export class SpotlightDirective implements OnInit {
     const y = event.clientY - rect.top;
 
     // Update CSS variables
-    this.renderer.setStyle(this.el.nativeElement, '--mouse-x', `${x}px`);
-    this.renderer.setStyle(this.el.nativeElement, '--mouse-y', `${y}px`);
+    this.el.nativeElement.style.setProperty('--mouse-x', `${x}px`);
+    this.el.nativeElement.style.setProperty('--mouse-y', `${y}px`);
   }
 
   @HostListener('mouseleave')
   onMouseLeave(): void {
     // Reset to center when mouse leaves to avoid abrupt transitions
     const rect = this.el.nativeElement.getBoundingClientRect();
-    this.renderer.setStyle(this.el.nativeElement, '--mouse-x', `${rect.width / 2}px`);
-    this.renderer.setStyle(this.el.nativeElement, '--mouse-y', `${rect.height / 2}px`);
+    this.el.nativeElement.style.setProperty('--mouse-x', `${rect.width / 2}px`);
+    this.el.nativeElement.style.setProperty('--mouse-y', `${rect.height / 2}px`);
   }
 }
