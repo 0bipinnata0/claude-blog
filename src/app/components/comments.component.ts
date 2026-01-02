@@ -54,6 +54,11 @@ export class CommentsComponent {
   }
 
   private loadGiscus(config: GiscusConfig, theme: string): void {
+    // Only run in browser
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     // Remove existing script and iframe if present
     this.cleanup();
 
@@ -84,6 +89,11 @@ export class CommentsComponent {
   }
 
   private cleanup(): void {
+    // Only run in browser
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     // Remove the giscus iframe if it exists
     const giscusFrame = document.querySelector('iframe.giscus-frame');
     if (giscusFrame) {

@@ -1,4 +1,5 @@
-import { Injectable, signal, effect } from '@angular/core';
+import { Injectable, signal, effect, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 export type Theme = 'light' | 'dark';
 
@@ -6,6 +7,8 @@ export type Theme = 'light' | 'dark';
   providedIn: 'root'
 })
 export class ThemeService {
+  private platformId = inject(PLATFORM_ID);
+
   // Signal to track current theme
   private readonly _theme = signal<Theme>(this.getInitialTheme());
 
@@ -24,7 +27,8 @@ export class ThemeService {
    * Get initial theme from localStorage or system preference
    */
   private getInitialTheme(): Theme {
-    if (typeof window === 'undefined') {
+    // Only access browser APIs if we're in the browser
+    if (!isPlatformBrowser(this.platformId)) {
       return 'light';
     }
 
@@ -46,7 +50,8 @@ export class ThemeService {
    * Apply theme to DOM and save to localStorage
    */
   private applyTheme(theme: Theme): void {
-    if (typeof document === 'undefined') {
+    // Only access browser APIs if we're in the browser
+    if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 

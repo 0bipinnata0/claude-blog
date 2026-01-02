@@ -1,4 +1,5 @@
-import { Injectable, signal, inject, isDevMode } from '@angular/core';
+import { Injectable, signal, inject, isDevMode, PLATFORM_ID, afterNextRender } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
 export interface User {
@@ -13,14 +14,19 @@ export interface User {
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private platformId = inject(PLATFORM_ID);
 
   // User signal - null means not authenticated
   user = signal<User | null>(null);
   isAuthenticated = signal<boolean>(false);
 
   constructor() {
-    // Check authentication status on initialization
-    this.checkAuth();
+    // Only check authentication in browser environment
+    if (isPlatformBrowser(this.platformId)) {
+      afterNextRender(() => {
+        this.checkAuth();
+      });
+    }
   }
 
   /**
@@ -58,6 +64,10 @@ export class AuthService {
    * Redirect to GitHub OAuth login
    */
   login() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return; // Don't redirect during SSR
+    }
+
     if (isDevMode()) {
       alert('🔧 Development Mode\n\nGitHub OAuth login is only available in production.\n\nTo test authentication:\n1. Deploy to Cloudflare Pages\n2. Configure GitHub OAuth App\n3. Set environment variables\n\nSee DEPLOY_TO_CLOUDFLARE.md for details.');
       return;
@@ -70,6 +80,10 @@ export class AuthService {
    * Logout user
    */
   logout() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return; // Don't logout during SSR
+    }
+
     if (isDevMode()) {
       this.user.set(null);
       this.isAuthenticated.set(false);

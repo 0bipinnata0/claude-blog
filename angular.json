@@ -33,16 +33,35 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [
-              "node_modules/mermaid/dist/mermaid.min.js"
-            ],
             "server": "src/main.server.ts",
             "prerender": {
               "routesFile": "routes.txt"
             },
             "ssr": {
               "entry": "src/server.ts"
-            }
+            },
+            "allowedCommonJsDependencies": [
+              "prismjs",
+              "prismjs/components/prism-core",
+              "prismjs/components/prism-typescript",
+              "prismjs/components/prism-javascript",
+              "prismjs/components/prism-markup",
+              "prismjs/components/prism-css",
+              "prismjs/components/prism-json",
+              "prismjs/components/prism-bash",
+              "prismjs/components/prism-markdown",
+              "clipboard",
+              "cytoscape-fcose",
+              "@braintree/sanitize-url",
+              "dayjs",
+              "dayjs/plugin/isoWeek.js",
+              "dayjs/plugin/customParseFormat.js",
+              "dayjs/plugin/advancedFormat.js",
+              "dayjs/plugin/duration.js",
+              "cytoscape-cose-bilkent",
+              "vscode-jsonrpc/lib/common/events.js",
+              "vscode-jsonrpc/lib/common/cancellation.js"
+            ]
           },
           "configurations": {
             "production": {

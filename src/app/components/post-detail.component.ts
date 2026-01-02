@@ -1,4 +1,5 @@
-import { Component, inject, input, computed, effect, signal, afterNextRender, resource } from '@angular/core';
+import { Component, inject, input, computed, effect, signal, afterNextRender, resource, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BlogService } from '../services/blog.service';
@@ -11,6 +12,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MarkdownComponent } from 'ngx-markdown';
 import { CommentsComponent, GiscusConfig } from './comments.component';
+import { loadPrism, loadMermaid } from '../utils/prism-loader';
+
+interface PostMetadata {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  date: string;
+  coverImage: string;
+  author?: string;
+  tags?: string[];
+  fileName: string;
+}
 
 @Component({
   selector: 'app-post-detail',
@@ -380,6 +394,7 @@ export class PostDetailComponent {
   private blogService = inject(BlogService);
   private seoService = inject(SeoService);
   private http = inject(HttpClient);
+  private platformId = inject(PLATFORM_ID);
   authService = inject(AuthService);
 
   // Strictly typed input signal for slug
@@ -447,9 +462,23 @@ export class PostDetailComponent {
   postContentResource = resource({
     loader: async () => {
       const currentSlug = this.slug();
-      const fileName = this.blogService.getFileNameForSlug(currentSlug);
-      if (!fileName) {
+
+      // Directly fetch the index to get fileName, independent of BlogService
+      const indexResponse = await fetch('/posts/index.json');
+      if (!indexResponse.ok) {
+        throw new Error('Failed to fetch posts index');
+      }
+
+      const postsIndex: PostMetadata[] = await indexResponse.json();
+      const postMeta = postsIndex.find((p: PostMetadata) => p.slug === currentSlug);
+
+      if (!postMeta) {
         throw new Error(`Post not found: ${currentSlug}`);
+      }
+
+      const fileName = postMeta.fileName;
+      if (!fileName) {
+        throw new Error(`fileName not found for slug: ${currentSlug}`);
       }
 
       const response = await fetch(`/posts/${fileName}`);
@@ -483,6 +512,25 @@ export class PostDetailComponent {
           publishedTime: currentPost.date.toString(),
           tags: currentPost.tags
         });
+      }
+    });
+
+    // Lazy-load PrismJS and Mermaid when content is ready (only in browser)
+    effect(() => {
+      if (isPlatformBrowser(this.platformId)) {
+        const content = this.postContent();
+        if (content) {
+          // Load PrismJS and Mermaid dynamically
+          Promise.all([loadPrism(), loadMermaid()]).then(() => {
+            // Trigger Prism syntax highlighting after a short delay
+            // to ensure DOM is updated with markdown content
+            setTimeout(() => {
+              if (typeof window !== 'undefined' && (window as any).Prism) {
+                (window as any).Prism.highlightAll();
+              }
+            }, 100);
+          });
+        }
       }
     });
 
