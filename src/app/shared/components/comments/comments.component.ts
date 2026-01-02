@@ -1,6 +1,6 @@
-import { Component, input, effect, inject, PLATFORM_ID, signal } from '@angular/core';
+import { Component, input, effect, inject, PLATFORM_ID, signal, ElementRef, OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { ThemeService } from '../services/theme.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -21,133 +21,20 @@ export interface GiscusConfig {
   selector: 'app-comments',
   standalone: true,
   imports: [MatIconModule, MatButtonModule],
-  template: `
-    <div class="comments-section">
-      @if (errorState()) {
-        <div class="error-message">
-          <mat-icon>info</mat-icon>
-          <div class="error-content">
-            <h3>Comments Unavailable</h3>
-            <p>{{ errorMessage() }}</p>
-            <button mat-button (click)="retry()">
-              <mat-icon>refresh</mat-icon>
-              Retry
-            </button>
-          </div>
-        </div>
-      } @else if (loading()) {
-        <div class="loading-state">
-          <div class="loading-spinner"></div>
-          <p>Loading comments...</p>
-        </div>
-      } @else {
-        <div class="giscus"></div>
-      }
-    </div>
-  `,
-  styles: [`
-    .comments-section {
-      margin-top: 48px;
-      padding-top: 32px;
-      border-top: 1px solid var(--mat-sys-outline-variant);
-    }
-
-    .giscus {
-      min-height: 200px;
-    }
-
-    /* Error Message Styling */
-    .error-message {
-      display: flex;
-      gap: 16px;
-      padding: 24px;
-      border-radius: 12px;
-      background: color-mix(in srgb, var(--mat-sys-error) 8%, transparent);
-      border: 1px solid color-mix(in srgb, var(--mat-sys-error) 30%, transparent);
-      color: var(--mat-sys-on-surface);
-    }
-
-    .error-message mat-icon {
-      color: var(--mat-sys-error);
-      font-size: 32px;
-      width: 32px;
-      height: 32px;
-      flex-shrink: 0;
-    }
-
-    .error-content {
-      flex: 1;
-    }
-
-    .error-content h3 {
-      margin: 0 0 8px 0;
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: var(--mat-sys-error);
-    }
-
-    .error-content p {
-      margin: 0 0 16px 0;
-      line-height: 1.6;
-      color: var(--mat-sys-on-surface-variant);
-    }
-
-    .error-content button {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .error-content button mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-      color: var(--mat-sys-primary);
-    }
-
-    /* Loading State */
-    .loading-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 48px 24px;
-      gap: 16px;
-    }
-
-    .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid color-mix(in srgb, var(--mat-sys-primary) 20%, transparent);
-      border-top-color: var(--mat-sys-primary);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .loading-state p {
-      margin: 0;
-      color: var(--mat-sys-on-surface-variant);
-      font-size: 0.95rem;
-    }
-
-    /* Dark mode adjustments */
-    html.dark .error-message {
-      background: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
-    }
-  `]
+  templateUrl: './comments.component.html',
+  styleUrls: ['./comments.component.scss']
 })
-export class CommentsComponent {
+export class CommentsComponent implements OnDestroy {
   config = input.required<GiscusConfig>();
 
   private themeService = inject(ThemeService);
   private platformId = inject(PLATFORM_ID);
+  private elementRef = inject(ElementRef);
+
   private scriptElement?: HTMLScriptElement;
   private messageListener?: (event: MessageEvent) => void;
   private loadTimeout?: number;
+  private intersectionObserver?: IntersectionObserver;
 
   // State signals
   errorState = signal<boolean>(false);
@@ -160,12 +47,12 @@ export class CommentsComponent {
       if (isPlatformBrowser(this.platformId)) {
         const currentConfig = this.config();
         const theme = this.themeService.isDark() ? 'dark' : 'light';
-        this.loadGiscus(currentConfig, theme);
+        this.initializeGiscus(currentConfig, theme);
       }
     });
   }
 
-  private loadGiscus(config: GiscusConfig, theme: string): void {
+  private initializeGiscus(config: GiscusConfig, theme: string): void {
     // Only run in browser
     if (!isPlatformBrowser(this.platformId)) {
       return;
@@ -174,11 +61,41 @@ export class CommentsComponent {
     // Reset states
     this.errorState.set(false);
     this.loading.set(true);
-
-    // Remove existing script and iframe if present
     this.cleanup();
 
+    if (config.loading === 'lazy') {
+      this.setupIntersectionObserver(config, theme);
+    } else {
+      this.loadGiscus(config, theme);
+    }
+  }
+
+  private setupIntersectionObserver(config: GiscusConfig, theme: string): void {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
+
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Once visible, load the script and stop observing
+          this.loadGiscus(config, theme);
+          if (this.intersectionObserver) {
+            this.intersectionObserver.disconnect();
+            this.intersectionObserver = undefined;
+          }
+        }
+      });
+    }, {
+      rootMargin: '200px' // Start loading slightly before the user reaches the section
+    });
+
+    this.intersectionObserver.observe(this.elementRef.nativeElement);
+  }
+
+  private loadGiscus(config: GiscusConfig, theme: string): void {
     // Set up error timeout (15 seconds)
+    // We only start the timeout when we actually start loading the script
     if (this.loadTimeout) {
       window.clearTimeout(this.loadTimeout);
     }
@@ -205,7 +122,11 @@ export class CommentsComponent {
     script.setAttribute('data-input-position', config.inputPosition || 'bottom');
     script.setAttribute('data-theme', theme);
     script.setAttribute('data-lang', config.lang || 'en');
-    script.setAttribute('data-loading', config.loading || 'lazy');
+
+    // If we lazy loaded via IntersectionObserver, we can set this to eager now
+    // If it was configured as eager, it stays eager
+    script.setAttribute('data-loading', 'eager');
+
     script.crossOrigin = 'anonymous';
     script.async = true;
 
@@ -215,7 +136,7 @@ export class CommentsComponent {
     };
 
     // Find the giscus container and append script
-    const container = document.querySelector('.giscus');
+    const container = this.elementRef.nativeElement.querySelector('.giscus');
     if (container) {
       container.appendChild(script);
       this.scriptElement = script;
@@ -275,13 +196,19 @@ export class CommentsComponent {
   retry(): void {
     const currentConfig = this.config();
     const theme = this.themeService.isDark() ? 'dark' : 'light';
-    this.loadGiscus(currentConfig, theme);
+    this.initializeGiscus(currentConfig, theme);
   }
 
   private cleanup(): void {
     // Only run in browser
     if (!isPlatformBrowser(this.platformId)) {
       return;
+    }
+
+    // Disconnect observer
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+      this.intersectionObserver = undefined;
     }
 
     // Clear timeout
@@ -297,7 +224,7 @@ export class CommentsComponent {
     }
 
     // Remove the giscus iframe if it exists
-    const giscusFrame = document.querySelector('iframe.giscus-frame');
+    const giscusFrame = this.elementRef.nativeElement.querySelector('iframe.giscus-frame');
     if (giscusFrame) {
       giscusFrame.remove();
     }
@@ -309,7 +236,7 @@ export class CommentsComponent {
     }
 
     // Clear the container
-    const container = document.querySelector('.giscus');
+    const container = this.elementRef.nativeElement.querySelector('.giscus');
     if (container) {
       container.innerHTML = '';
     }

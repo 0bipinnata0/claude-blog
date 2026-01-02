@@ -1,0 +1,22 @@
+<div class="comments-section">
+    @if (errorState()) {
+    <div class="error-message">
+        <mat-icon>info</mat-icon>
+        <div class="error-content">
+            <h3>Comments Unavailable</h3>
+            <p>{{ errorMessage() }}</p>
+            <button mat-button (click)="retry()">
+                <mat-icon>refresh</mat-icon>
+                Retry
+            </button>
+        </div>
+    </div>
+    } @else if (loading()) {
+    <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading comments...</p>
+    </div>
+    }
+
+    <div class="giscus" [style.display]="(loading() || errorState()) ? 'none' : 'block'"></div>
+</div>

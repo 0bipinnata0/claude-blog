@@ -1,0 +1,17 @@
+<div class="content prose">
+    @if (isLoading()) {
+    <div class="skeleton-loader">
+        <div class="skeleton-line skeleton-title"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line skeleton-short"></div>
+        <div class="skeleton-spacing"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line skeleton-short"></div>
+    </div>
+    } @else {
+    <markdown [data]="content()"></markdown>
+    }
+</div>

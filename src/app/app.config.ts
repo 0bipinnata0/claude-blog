@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, HttpClient, withFetch } from '@angular/common/http';
 import { provideMarkdown } from 'ngx-markdown';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { IMAGE_LOADER, ImageLoaderConfig } from '@angular/common';
@@ -8,15 +8,19 @@ import { IMAGE_LOADER, ImageLoaderConfig } from '@angular/common';
 import { routes } from './app.routes';
 
 // Import configured marked instance
-import './utils/markdown-config';
+import './shared/utils/markdown-config';
+import { BLOG_DATA_SERVICE } from './core/services/blog-data.contract';
+import { HttpBlogDataService } from './core/services/http-blog-data.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
-    provideHttpClient(),
-    provideMarkdown(),
+    provideHttpClient(withFetch()),
+    provideMarkdown({
+      loader: HttpClient,
+    }),
     provideClientHydration(withEventReplay()),
     {
       provide: IMAGE_LOADER,
@@ -25,5 +29,6 @@ export const appConfig: ApplicationConfig = {
         return config.src;
       },
     },
+    { provide: BLOG_DATA_SERVICE, useClass: HttpBlogDataService }
   ]
 };

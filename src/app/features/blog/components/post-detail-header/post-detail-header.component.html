@@ -1,0 +1,28 @@
+<mat-card-header>
+    <mat-card-title>{{ post().title }}</mat-card-title>
+    <mat-card-subtitle>
+        <div class="post-meta">
+            <span class="meta-item">
+                <mat-icon>calendar_today</mat-icon>
+                {{ post().date | date: 'MMMM d, yyyy' }}
+            </span>
+            @if (interactionService.views() > 0) {
+            <span class="meta-item">
+                <mat-icon>visibility</mat-icon>
+                {{ interactionService.views() }} views
+            </span>
+            }
+            <button mat-mini-fab [color]="interactionService.hasLiked() ? 'warn' : 'accent'"
+                (click)="interactionService.toggleLike(post().slug)" [disabled]="interactionService.likesLoading()"
+                class="like-button"
+                [attr.aria-label]="interactionService.hasLiked() ? 'Unlike this post' : 'Like this post'">
+                <mat-icon>{{ interactionService.hasLiked() ? 'favorite' : 'favorite_border' }}</mat-icon>
+            </button>
+            @if (interactionService.likes() > 0) {
+            <span class="meta-item">
+                {{ interactionService.likes() }} {{ interactionService.likes() === 1 ? 'like' : 'likes' }}
+            </span>
+            }
+        </div>
+    </mat-card-subtitle>
+</mat-card-header>

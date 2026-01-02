@@ -1,0 +1,16 @@
+<div class="toc-container">
+    <div class="toc-header">
+        <mat-icon>list</mat-icon>
+        <h3>Table of Contents</h3>
+    </div>
+
+    <nav class="toc-nav">
+        @for (item of items(); track item.id) {
+        <a [href]="'#' + item.id" [class.active]="activeId() === item.id"
+            [attr.aria-current]="activeId() === item.id ? 'true' : null" [class.level-2]="item.level === 2"
+            [class.level-3]="item.level === 3" (click)="scrollToSection($event, item.id)">
+            {{ item.text }}
+        </a>
+        }
+    </nav>
+</div>

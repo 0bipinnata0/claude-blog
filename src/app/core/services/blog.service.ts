@@ -1,25 +1,16 @@
-import { Injectable, computed, resource } from '@angular/core';
-import { BlogPost } from '../models/post.model';
-
-interface PostMetadata {
-  id: string;
-  slug: string;
-  title: string;
-  summary: string;
-  date: string;
-  coverImage: string;
-  author?: string;
-  tags?: string[];
-  fileName: string;
-}
+import { Injectable, computed, resource, inject } from '@angular/core';
+import { BlogPost } from '../../shared/models/post.model';
+import { BLOG_DATA_SERVICE, PostMetadata } from './blog-data.contract';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BlogService {
+  private blogDataService = inject(BLOG_DATA_SERVICE);
+
   // Resource for fetching posts index using the modern resource API
   readonly postsResource = resource<PostMetadata[], unknown>({
-    loader: () => fetch('/posts/index.json').then(res => res.json())
+    loader: () => this.blogDataService.getPosts()
   });
 
   // Expose posts as BlogPost signal (without content)
@@ -49,4 +40,12 @@ export class BlogService {
     const post = data.find(p => p.slug === slug);
     return post?.fileName ?? null;
   }
+
+  /**
+   * Fetch post content by fileName
+   */
+  getPostContent(fileName: string): Promise<string> {
+    return this.blogDataService.getPostContent(fileName);
+  }
 }
+

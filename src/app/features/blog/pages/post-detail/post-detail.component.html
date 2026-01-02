@@ -1,0 +1,53 @@
+<!-- Reading Progress Bar -->
+<div class="reading-progress" [style.width.%]="readingProgress()"></div>
+
+<div class="container">
+    <a mat-button [routerLink]="['/']" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Articles
+    </a>
+
+    @if (post(); as post) {
+    <mat-card class="post-card">
+        <div class="image-container">
+            <img mat-card-image [ngSrc]="post.coverImage" [alt]="post.title"
+                [style.view-transition-name]="'img-' + post.slug" fill priority>
+        </div>
+
+        <app-post-detail-header [post]="post"></app-post-detail-header>
+
+        <mat-card-content>
+            <p class="summary">{{ post.summary }}</p>
+
+            <!-- Grid Layout: Content + TOC -->
+            <div class="content-grid">
+                <!-- Main Content -->
+                <app-post-detail-content [content]="postContent()" [isLoading]="postContentResource.isLoading()">
+                </app-post-detail-content>
+
+                <!-- Table of Contents (Desktop Only) -->
+                @if (tocItems().length > 0) {
+                <aside class="toc-sidebar">
+                    <app-table-of-contents [items]="tocItems()" />
+                </aside>
+                }
+            </div>
+
+            <app-comments [config]="giscusConfig"></app-comments>
+        </mat-card-content>
+    </mat-card>
+    } @else {
+    <mat-card class="not-found-card">
+        <mat-card-content>
+            <div class="not-found">
+                <mat-icon>sentiment_dissatisfied</mat-icon>
+                <h2>Post Not Found</h2>
+                <p>The article you're looking for doesn't exist.</p>
+                <a mat-raised-button color="primary" [routerLink]="['/']">
+                    Go to Home
+                </a>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    }
+</div>

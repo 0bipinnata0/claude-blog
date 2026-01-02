@@ -1,0 +1,46 @@
+mat-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.spacer {
+    flex: 1;
+}
+
+.user-avatar {
+    margin-left: 8px;
+}
+
+.user-avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-info {
+    padding: 8px 16px;
+    cursor: default;
+}
+
+.user-name {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.user-login {
+    font-size: 12px;
+    color: var(--mat-sys-on-surface-variant);
+    margin-top: 2px;
+}

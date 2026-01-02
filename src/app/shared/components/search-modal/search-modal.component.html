@@ -1,0 +1,48 @@
+<div class="search-container">
+    <div class="search-header">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input #searchInput type="text" class="search-input" [(ngModel)]="searchQuery"
+            (ngModelChange)="onSearchChange()" placeholder="Search articles..." aria-label="Search articles"
+            autocomplete="off">
+        <button class="close-button" (click)="close()" aria-label="Close search">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="search-results">
+        @if (searchQuery() && results().length === 0) {
+        <div class="no-results">
+            <mat-icon>search_off</mat-icon>
+            <p>No articles found</p>
+        </div>
+        } @else if (searchQuery()) {
+        <mat-list>
+            @for (post of results(); track post.id) {
+            <mat-list-item [routerLink]="['/post', post.slug]" (click)="close()" class="result-item">
+                <div class="result-content">
+                    <h3 class="result-title">{{ post.title }}</h3>
+                    <p class="result-summary">{{ post.summary }}</p>
+                    <div class="result-meta">
+                        <mat-icon class="meta-icon">calendar_today</mat-icon>
+                        <span>{{ post.date | date: 'MMM d, yyyy' }}</span>
+                    </div>
+                </div>
+            </mat-list-item>
+            }
+        </mat-list>
+        } @else {
+        <div class="search-hint">
+            <mat-icon>info</mat-icon>
+            <p>Start typing to search articles...</p>
+        </div>
+        }
+    </div>
+
+    <div class="search-footer">
+        <div class="keyboard-hints">
+            <kbd>↑↓</kbd> Navigate
+            <kbd>↵</kbd> Select
+            <kbd>Esc</kbd> Close
+        </div>
+    </div>
+</div>
