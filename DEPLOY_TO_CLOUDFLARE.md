@@ -200,14 +200,60 @@ If you need to redeploy without code changes:
 3. Click **Deployments** tab
 4. Click **Retry deployment** on the latest build
 
+## Serverless View Counter Setup (KV Namespace)
+
+Your blog includes a serverless view counter powered by Cloudflare Pages Functions and KV storage. After your first successful deployment, you need to configure the KV namespace binding:
+
+### Step 1: Create KV Namespace
+
+1. In your Cloudflare dashboard, go to **Workers & Pages** > **KV**
+2. Click **Create namespace**
+3. Name it: `BLOG_VIEWS`
+4. Click **Add**
+
+### Step 2: Bind KV to Your Project
+
+1. Go back to your Pages project (Workers & Pages > Your Project)
+2. Click **Settings** tab
+3. Scroll down to **Functions** section
+4. Under **KV namespace bindings**, click **Add binding**
+5. Configure the binding:
+   - **Variable name**: `BLOG_VIEWS` (must match exactly)
+   - **KV namespace**: Select the `BLOG_VIEWS` namespace you just created
+6. Click **Save**
+
+### Step 3: Redeploy
+
+1. Go to **Deployments** tab
+2. Click **Retry deployment** on the latest deployment
+3. The view counter will now work!
+
+### How It Works
+
+- Each blog post page makes a POST request to `/api/visits/[slug]`
+- The edge function increments the counter in KV storage
+- The view count displays next to the publish date with an eye icon
+- All processing happens at the edge (fast and free)
+- Only runs in the browser (skipped during SSR/prerendering)
+
+### Viewing Statistics
+
+To see your view counts:
+1. Go to **Workers & Pages** > **KV** > **BLOG_VIEWS**
+2. Click **View** to see all post slugs and their view counts
+3. You can manually edit or delete entries if needed
+
 ## Support
 
 - **Cloudflare Pages Docs**: https://developers.cloudflare.com/pages/
 - **Angular SSR/SSG**: https://angular.dev/guide/ssr
 - **Giscus Setup**: https://giscus.app/
+- **Cloudflare KV**: https://developers.cloudflare.com/kv/
 
 ---
 
 **Last Updated**: 2026-01-02
 **Angular Version**: 21.0.0
 **Build System**: @angular/build (application builder)
+**Features**: SSG, Search, Comments, Serverless View Counter
+

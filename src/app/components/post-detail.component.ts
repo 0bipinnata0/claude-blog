@@ -1,5 +1,6 @@
-import { Component, inject, input, computed, effect } from '@angular/core';
+import { Component, inject, input, computed, effect, signal, afterNextRender } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { BlogService } from '../services/blog.service';
 import { SeoService } from '../services/seo.service';
 import { DatePipe, NgOptimizedImage } from '@angular/common';
@@ -37,8 +38,18 @@ import { switchMap } from 'rxjs';
           <mat-card-header>
             <mat-card-title>{{ post.title }}</mat-card-title>
             <mat-card-subtitle>
-              <mat-icon>calendar_today</mat-icon>
-              {{ post.date | date: 'MMMM d, yyyy' }}
+              <div class="post-meta">
+                <span class="meta-item">
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ post.date | date: 'MMMM d, yyyy' }}
+                </span>
+                @if (views() > 0) {
+                  <span class="meta-item">
+                    <mat-icon>visibility</mat-icon>
+                    {{ views() }} views
+                  </span>
+                }
+              </div>
             </mat-card-subtitle>
           </mat-card-header>
 
@@ -122,6 +133,19 @@ import { switchMap } from 'rxjs';
       align-items: center;
       gap: 8px;
       font-size: 1rem;
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     mat-card-subtitle mat-icon {
@@ -312,6 +336,10 @@ import { switchMap } from 'rxjs';
 export class PostDetailComponent {
   private blogService = inject(BlogService);
   private seoService = inject(SeoService);
+  private http = inject(HttpClient);
+
+  // View counter signal
+  views = signal<number>(0);
 
   // Giscus configuration
   // Configured with repository: 0bipinnata0/claude-blog
@@ -362,6 +390,23 @@ export class PostDetailComponent {
           publishedTime: currentPost.date.toString(),
           tags: currentPost.tags
         });
+      }
+    });
+
+    // Increment view counter (only in browser, not during SSR/prerender)
+    afterNextRender(() => {
+      const currentSlug = this.slug();
+      if (currentSlug) {
+        this.http.post<{ views: number }>(`/api/visits/${currentSlug}`, {})
+          .subscribe({
+            next: (response) => {
+              this.views.set(response.views);
+            },
+            error: (error) => {
+              console.error('Failed to increment view count:', error);
+              // Silently fail - don't show error to user
+            }
+          });
       }
     });
   }
