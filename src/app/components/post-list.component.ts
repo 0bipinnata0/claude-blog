@@ -19,15 +19,17 @@ import { MatIconModule } from '@angular/material/icon';
       </div>
 
       <div class="posts-grid">
-        @for (post of blogService.posts(); track post.id) {
+        @for (post of blogService.posts(); track post.id; let idx = $index) {
           <mat-card>
-            <img
-              mat-card-image
-              [ngSrc]="post.coverImage"
-              [alt]="post.title"
-              [style.view-transition-name]="'img-' + post.slug"
-              width="800"
-              height="400">
+            <div class="image-container">
+              <img
+                mat-card-image
+                [ngSrc]="post.coverImage"
+                [alt]="post.title"
+                [style.view-transition-name]="'img-' + post.slug"
+                [priority]="idx < 2"
+                fill>
+            </div>
             <mat-card-header>
               <mat-card-title>{{ post.title }}</mat-card-title>
               <mat-card-subtitle>
@@ -85,6 +87,17 @@ import { MatIconModule } from '@angular/material/icon';
       height: 100%;
     }
 
+    .image-container {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    img {
+      object-fit: cover;
+    }
+
     mat-card-header {
       margin-bottom: 16px;
     }
@@ -131,11 +144,6 @@ import { MatIconModule } from '@angular/material/icon';
       font-size: 18px;
       width: 18px;
       height: 18px;
-    }
-
-    img {
-      object-fit: cover;
-      height: 200px;
     }
   `]
 })

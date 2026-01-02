@@ -1,4 +1,4 @@
-import { Component, inject, input, computed, effect, signal, afterNextRender } from '@angular/core';
+import { Component, inject, input, computed, effect, signal, afterNextRender, resource } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BlogService } from '../services/blog.service';
@@ -10,8 +10,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MarkdownComponent } from 'ngx-markdown';
 import { CommentsComponent, GiscusConfig } from './comments.component';
-import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-post-detail',
@@ -26,14 +24,15 @@ import { switchMap } from 'rxjs';
 
       @if (post(); as post) {
         <mat-card class="post-card">
-          <img
-            mat-card-image
-            [ngSrc]="post.coverImage"
-            [alt]="post.title"
-            [style.view-transition-name]="'img-' + post.slug"
-            width="800"
-            height="400"
-            priority>
+          <div class="image-container">
+            <img
+              mat-card-image
+              [ngSrc]="post.coverImage"
+              [alt]="post.title"
+              [style.view-transition-name]="'img-' + post.slug"
+              fill
+              priority>
+          </div>
 
           <mat-card-header>
             <mat-card-title>{{ post.title }}</mat-card-title>
@@ -56,12 +55,7 @@ import { switchMap } from 'rxjs';
           <mat-card-content>
             <p class="summary">{{ post.summary }}</p>
             <div class="content prose">
-              @defer (on viewport) {
-                <markdown
-                  [data]="postContent()"
-                  mermaid
-                ></markdown>
-              } @placeholder {
+              @if (postContentResource.isLoading()) {
                 <div class="skeleton-loader">
                   <div class="skeleton-line skeleton-title"></div>
                   <div class="skeleton-line"></div>
@@ -73,6 +67,11 @@ import { switchMap } from 'rxjs';
                   <div class="skeleton-line"></div>
                   <div class="skeleton-line skeleton-short"></div>
                 </div>
+              } @else {
+                <markdown
+                  [data]="postContent()"
+                  mermaid
+                ></markdown>
               }
             </div>
 
@@ -113,9 +112,15 @@ import { switchMap } from 'rxjs';
       margin-bottom: 32px;
     }
 
+    .image-container {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      overflow: hidden;
+    }
+
     img {
       object-fit: cover;
-      max-height: 400px;
     }
 
     mat-card-header {
@@ -365,14 +370,29 @@ export class PostDetailComponent {
     return this.blogService.posts().find(post => post.slug === currentSlug) ?? null;
   });
 
-  // Convert slug signal to observable, then fetch content
-  // toSignal is called ONCE at initialization, not in reactive context
-  postContent = toSignal(
-    toObservable(this.slug).pipe(
-      switchMap(slug => this.blogService.getPostContent(slug))
-    ),
-    { initialValue: '' }
-  );
+  // Resource for loading post content based on slug
+  postContentResource = resource({
+    loader: async () => {
+      const currentSlug = this.slug();
+      const fileName = this.blogService.getFileNameForSlug(currentSlug);
+      if (!fileName) {
+        throw new Error(`Post not found: ${currentSlug}`);
+      }
+
+      const response = await fetch(`/posts/${fileName}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch post: ${response.statusText}`);
+      }
+
+      const content = await response.text();
+      // Remove frontmatter from content (everything between --- markers)
+      const contentWithoutFrontmatter = content.replace(/^---[\s\S]*?---\n/, '');
+      return contentWithoutFrontmatter.trim();
+    }
+  });
+
+  // Computed signal for post content
+  postContent = computed(() => this.postContentResource.value() ?? '');
 
   constructor() {
     // Update SEO meta tags when post changes
