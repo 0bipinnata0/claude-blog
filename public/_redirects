@@ -1,0 +1,3 @@
+# Cloudflare Pages SPA routing fallback
+# This ensures all routes are handled by Angular's router
+/* /index.html 200

@@ -313,13 +313,13 @@ export class PostDetailComponent {
   private blogService = inject(BlogService);
   private seoService = inject(SeoService);
 
-  // Giscus configuration - Update these values with your own GitHub repository
-  // To set up Giscus: https://giscus.app/
+  // Giscus configuration
+  // Configured with repository: 0bipinnata0/claude-blog
   giscusConfig: GiscusConfig = {
-    repo: 'your-username/your-repo',
-    repoId: 'your-repo-id',
+    repo: '0bipinnata0/claude-blog',
+    repoId: 'R_kgDOQygX1Q',
     category: 'Announcements',
-    categoryId: 'your-category-id',
+    categoryId: 'DIC_kwDOQygX1c4C0fZB',
     mapping: 'pathname',
     reactionsEnabled: true,
     emitMetadata: false,
