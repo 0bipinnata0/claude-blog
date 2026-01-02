@@ -10,6 +10,9 @@
 @import 'prismjs/themes/prism-tomorrow.css';
 @import 'prismjs/plugins/toolbar/prism-toolbar.css';
 
+// Import JetBrains Mono font for code blocks
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
 html {
   height: 100%;
   @include mat.theme((
@@ -63,12 +66,61 @@ html.dark body {
   background: var(--mat-sys-outline);
 }
 
-/* Code block enhancements */
+/* Code block enhancements - Mac-style */
 pre[class*="language-"] {
   position: relative;
   border-radius: 8px;
   margin: 1.5rem 0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding-top: 3rem !important; /* Space for title bar */
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* Mac-style title bar with traffic lights */
+pre[class*="language-"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.5rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px 8px 0 0;
+}
+
+/* Mac traffic light dots */
+pre[class*="language-"]::after {
+  content: '';
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff5f56; /* Red dot */
+  box-shadow:
+    20px 0 0 #ffbd2e, /* Yellow dot */
+    40px 0 0 #27c93f, /* Green dot */
+    0 0 0 1px rgba(0, 0, 0, 0.1),
+    20px 0 0 1px rgba(0, 0, 0, 0.1),
+    40px 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode adjustments for code blocks */
+html.dark pre[class*="language-"]::before {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.01)
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Copy button styling */
@@ -107,4 +159,121 @@ pre[class*="language-"] {
 
 html.dark .mermaid {
   filter: invert(0.9) hue-rotate(180deg);
+}
+
+/* Spotlight Effect - Premium Hover Glow */
+[appSpotlight] {
+  position: relative;
+  overflow: hidden;
+}
+
+[appSpotlight]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  background: radial-gradient(
+    800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.15),
+    transparent 40%
+  );
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+[appSpotlight]:hover::before {
+  opacity: 1;
+}
+
+/* Dark mode spotlight - slightly more visible */
+html.dark [appSpotlight]::before {
+  background: radial-gradient(
+    800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.2),
+    transparent 40%
+  );
+}
+
+/* Ensure card content stays above the spotlight */
+[appSpotlight] > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* GitHub-style Admonitions */
+.admonition {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+  background: color-mix(in srgb, var(--admonition-color) 8%, transparent);
+  border-color: var(--admonition-color);
+}
+
+.admonition-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--admonition-color);
+}
+
+.admonition-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.admonition-label {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admonition-content {
+  color: var(--mat-sys-on-surface);
+  line-height: 1.6;
+}
+
+.admonition-content :first-child {
+  margin-top: 0;
+}
+
+.admonition-content :last-child {
+  margin-bottom: 0;
+}
+
+/* Note - Blue */
+.admonition-note {
+  --admonition-color: #2196f3;
+}
+
+/* Tip - Green */
+.admonition-tip {
+  --admonition-color: #4caf50;
+}
+
+/* Warning - Yellow/Orange */
+.admonition-warning {
+  --admonition-color: #ff9800;
+}
+
+/* Important - Purple */
+.admonition-important {
+  --admonition-color: #9c27b0;
+}
+
+/* Caution - Red */
+.admonition-caution {
+  --admonition-color: #f44336;
+}
+
+/* Dark mode adjustments for admonitions */
+html.dark .admonition {
+  background: color-mix(in srgb, var(--admonition-color) 15%, transparent);
+}
+
+html.dark .admonition-content {
+  color: var(--mat-sys-on-surface);
 }

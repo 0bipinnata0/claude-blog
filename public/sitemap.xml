@@ -2,9 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://claude-blog.pages.dev/</loc>
-    <lastmod>2026-01-02T14:43:59.648Z</lastmod>
+    <lastmod>2026-01-02T15:14:50.177Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://claude-blog.pages.dev/post/markdown-features-showcase</loc>
+    <lastmod>2026-01-02T15:10:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://claude-blog.pages.dev/post/deep-dive-angular-signals</loc>

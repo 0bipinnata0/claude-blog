@@ -6,11 +6,12 @@ import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { SpotlightDirective } from '../directives/spotlight.directive';
 
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [RouterLink, DatePipe, NgOptimizedImage, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [RouterLink, DatePipe, NgOptimizedImage, MatCardModule, MatButtonModule, MatIconModule, SpotlightDirective],
   template: `
     <div class="container">
       <div class="header">
@@ -18,42 +19,52 @@ import { MatIconModule } from '@angular/material/icon';
         <p class="subtitle">Insights on Angular, Material Design, and modern web development</p>
       </div>
 
-      <div class="posts-grid">
+      <div class="bento-grid">
         @for (post of blogService.posts(); track post.id; let idx = $index) {
-          <mat-card>
-            <div class="image-container">
+          <a
+            appSpotlight
+            [routerLink]="['/post', post.slug]"
+            class="bento-card"
+            [class.featured]="idx === 0"
+            [class.wide]="idx > 0 && (idx + 1) % 4 === 0"
+            [style.view-transition-name]="'card-' + post.slug">
+
+            <!-- Background Image (Full bleed for featured/wide cards) -->
+            <div class="card-image">
               <img
-                mat-card-image
                 [ngSrc]="post.coverImage"
                 [alt]="post.title"
                 [style.view-transition-name]="'img-' + post.slug"
                 [priority]="idx < 2"
                 fill>
+              @if (idx === 0 || (idx > 0 && (idx + 1) % 4 === 0)) {
+                <div class="image-overlay"></div>
+              }
             </div>
-            <mat-card-header>
-              <mat-card-title>{{ post.title }}</mat-card-title>
-              <mat-card-subtitle>
+
+            <!-- Content -->
+            <div class="card-content" [class.overlay-content]="idx === 0 || (idx > 0 && (idx + 1) % 4 === 0)">
+              <div class="card-meta">
                 <mat-icon>calendar_today</mat-icon>
-                {{ post.date | date: 'MMM d, yyyy' }}
-              </mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <p>{{ post.summary }}</p>
-            </mat-card-content>
-            <mat-card-actions align="end">
-              <a mat-raised-button color="primary" [routerLink]="['/post', post.slug]">
-                Read More
+                <span>{{ post.date | date: 'MMM d, yyyy' }}</span>
+              </div>
+              <h2 class="card-title">{{ post.title }}</h2>
+              @if (idx !== 0 && !((idx > 0 && (idx + 1) % 4 === 0))) {
+                <p class="card-summary">{{ post.summary }}</p>
+              }
+              <div class="card-action">
+                <span>Read Article</span>
                 <mat-icon>arrow_forward</mat-icon>
-              </a>
-            </mat-card-actions>
-          </mat-card>
+              </div>
+            </div>
+          </a>
         }
       </div>
     </div>
   `,
   styles: [`
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 32px 16px;
     }
@@ -75,75 +86,203 @@ import { MatIconModule } from '@angular/material/icon';
       margin: 0;
     }
 
-    .posts-grid {
+    /* Bento Grid Layout */
+    .bento-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 24px;
+      grid-template-columns: 1fr;
+      grid-auto-rows: 300px;
+      gap: 16px;
     }
 
-    mat-card {
+    @media (min-width: 768px) {
+      .bento-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* Bento Card Base Styles - Glassmorphism */
+    .bento-card {
+      position: relative;
       display: flex;
       flex-direction: column;
-      height: 100%;
-    }
-
-    .image-container {
-      position: relative;
-      width: 100%;
-      height: 200px;
+      justify-content: flex-end;
       overflow: hidden;
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--mat-sys-surface-container) 70%, transparent);
+      backdrop-filter: blur(12px);
+      border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 20%, transparent);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
     }
 
-    img {
+    .bento-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px -8px color-mix(in srgb, var(--mat-sys-shadow) 30%, transparent);
+      border-color: color-mix(in srgb, var(--mat-sys-primary) 40%, transparent);
+    }
+
+    /* Featured Card (First post) - 2x2 */
+    .bento-card.featured {
+      grid-column: span 1;
+      grid-row: span 2;
+    }
+
+    @media (min-width: 768px) {
+      .bento-card.featured {
+        grid-column: span 2;
+      }
+    }
+
+    /* Wide Card (Every 4th post) - 2x1 */
+    .bento-card.wide {
+      grid-column: span 1;
+    }
+
+    @media (min-width: 768px) {
+      .bento-card.wide {
+        grid-column: span 2;
+      }
+    }
+
+    /* Card Image - Full Bleed */
+    .card-image {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .card-image img {
       object-fit: cover;
     }
 
-    mat-card-header {
-      margin-bottom: 16px;
+    /* Regular cards - smaller image area */
+    .bento-card:not(.featured):not(.wide) .card-image {
+      height: 45%;
+      bottom: auto;
     }
 
-    mat-card-title {
-      font-size: 1.5rem;
-      line-height: 1.3;
-      margin-bottom: 8px;
+    /* Image Overlay for Featured/Wide Cards */
+    .image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        color-mix(in srgb, var(--mat-sys-surface) 95%, transparent) 0%,
+        color-mix(in srgb, var(--mat-sys-surface) 70%, transparent) 40%,
+        transparent 100%
+      );
     }
 
-    mat-card-subtitle {
+    /* Card Content */
+    .card-content {
+      position: relative;
+      z-index: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: linear-gradient(
+        to top,
+        var(--mat-sys-surface-container) 0%,
+        transparent 100%
+      );
+    }
+
+    /* Overlay Content for Featured/Wide Cards */
+    .card-content.overlay-content {
+      background: none;
+      padding: 24px;
+      min-height: 50%;
+      justify-content: flex-end;
+    }
+
+    /* Card Meta */
+    .card-meta {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      font-size: 0.875rem;
+      color: var(--mat-sys-on-surface-variant);
+      font-weight: 500;
     }
 
-    mat-card-subtitle mat-icon {
+    .card-meta mat-icon {
       font-size: 16px;
       width: 16px;
       height: 16px;
     }
 
-    mat-card-content {
-      flex: 1;
-    }
-
-    mat-card-content p {
-      line-height: 1.6;
+    /* Card Title */
+    .card-title {
       margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--mat-sys-on-surface);
     }
 
-    mat-card-actions {
-      margin: 16px 0 0 0;
-      padding: 0 16px 16px 16px;
+    .bento-card.featured .card-title {
+      font-size: 2rem;
+      font-weight: 700;
     }
 
-    mat-card-actions a {
+    .bento-card.wide .card-title {
+      font-size: 1.75rem;
+    }
+
+    /* Card Summary */
+    .card-summary {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--mat-sys-on-surface-variant);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Card Action */
+    .card-action {
       display: flex;
       align-items: center;
       gap: 8px;
+      color: var(--mat-sys-primary);
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-top: auto;
     }
 
-    mat-card-actions mat-icon {
+    .card-action mat-icon {
       font-size: 18px;
       width: 18px;
       height: 18px;
+      transition: transform 0.3s ease;
+    }
+
+    .bento-card:hover .card-action mat-icon {
+      transform: translateX(4px);
+    }
+
+    /* Dark Mode Enhancements */
+    html.dark .bento-card {
+      background: color-mix(in srgb, var(--mat-sys-surface-container) 40%, transparent);
+      border-color: color-mix(in srgb, var(--mat-sys-outline-variant) 30%, transparent);
+    }
+
+    html.dark .bento-card:hover {
+      background: color-mix(in srgb, var(--mat-sys-surface-container) 60%, transparent);
+    }
+
+    html.dark .image-overlay {
+      background: linear-gradient(
+        to top,
+        color-mix(in srgb, var(--mat-sys-surface) 90%, transparent) 0%,
+        color-mix(in srgb, var(--mat-sys-surface) 60%, transparent) 40%,
+        transparent 100%
+      );
     }
   `]
 })

@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MarkdownComponent } from 'ngx-markdown';
 import { CommentsComponent, GiscusConfig } from './comments.component';
+import { TableOfContentsComponent, TocItem } from './table-of-contents.component';
 import { loadPrism, loadMermaid } from '../utils/prism-loader';
 
 interface PostMetadata {
@@ -29,8 +30,11 @@ interface PostMetadata {
 @Component({
   selector: 'app-post-detail',
   standalone: true,
-  imports: [RouterLink, DatePipe, NgOptimizedImage, MatCardModule, MatButtonModule, MatIconModule, MatChipsModule, MarkdownComponent, CommentsComponent],
+  imports: [RouterLink, DatePipe, NgOptimizedImage, MatCardModule, MatButtonModule, MatIconModule, MatChipsModule, MarkdownComponent, CommentsComponent, TableOfContentsComponent],
   template: `
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress" [style.width.%]="readingProgress()"></div>
+
     <div class="container">
       <a mat-button [routerLink]="['/']" class="back-button">
         <mat-icon>arrow_back</mat-icon>
@@ -83,24 +87,36 @@ interface PostMetadata {
 
           <mat-card-content>
             <p class="summary">{{ post.summary }}</p>
-            <div class="content prose">
-              @if (postContentResource.isLoading()) {
-                <div class="skeleton-loader">
-                  <div class="skeleton-line skeleton-title"></div>
-                  <div class="skeleton-line"></div>
-                  <div class="skeleton-line"></div>
-                  <div class="skeleton-line"></div>
-                  <div class="skeleton-line skeleton-short"></div>
-                  <div class="skeleton-spacing"></div>
-                  <div class="skeleton-line"></div>
-                  <div class="skeleton-line"></div>
-                  <div class="skeleton-line skeleton-short"></div>
-                </div>
-              } @else {
-                <markdown
-                  [data]="postContent()"
-                  mermaid
-                ></markdown>
+
+            <!-- Grid Layout: Content + TOC -->
+            <div class="content-grid">
+              <!-- Main Content -->
+              <div class="content prose">
+                @if (postContentResource.isLoading()) {
+                  <div class="skeleton-loader">
+                    <div class="skeleton-line skeleton-title"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line skeleton-short"></div>
+                    <div class="skeleton-spacing"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line skeleton-short"></div>
+                  </div>
+                } @else {
+                  <markdown
+                    [data]="postContent()"
+                    mermaid
+                  ></markdown>
+                }
+              </div>
+
+              <!-- Table of Contents (Desktop Only) -->
+              @if (tocItems().length > 0) {
+                <aside class="toc-sidebar">
+                  <app-table-of-contents [items]="tocItems()" />
+                </aside>
               }
             </div>
 
@@ -124,8 +140,24 @@ interface PostMetadata {
     </div>
   `,
   styles: [`
+    /* Reading Progress Bar */
+    .reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(
+        90deg,
+        var(--mat-sys-primary),
+        var(--mat-sys-tertiary)
+      );
+      z-index: 1000;
+      transition: width 0.1s ease-out;
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--mat-sys-primary) 40%, transparent);
+    }
+
     .container {
-      max-width: 900px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 32px 16px;
     }
@@ -221,8 +253,33 @@ interface PostMetadata {
       margin: 24px 0;
     }
 
-    .content {
+    /* Content Grid Layout */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
       margin-top: 32px;
+    }
+
+    @media (min-width: 1024px) {
+      .content-grid {
+        grid-template-columns: 1fr 250px;
+      }
+    }
+
+    /* TOC Sidebar */
+    .toc-sidebar {
+      display: none;
+    }
+
+    @media (min-width: 1024px) {
+      .toc-sidebar {
+        display: block;
+      }
+    }
+
+    .content {
+      margin-top: 0;
     }
 
     .prose {
@@ -403,6 +460,12 @@ export class PostDetailComponent {
   // View counter signal
   views = signal<number>(0);
 
+  // Reading progress signal (0-100)
+  readingProgress = signal<number>(0);
+
+  // Table of Contents items
+  tocItems = signal<TocItem[]>([]);
+
   // Like counter with real API backend
   likes = signal<number>(0);
   hasLiked = signal<boolean>(false);
@@ -534,6 +597,24 @@ export class PostDetailComponent {
       }
     });
 
+    // Parse TOC from markdown content
+    effect(() => {
+      const content = this.postContent();
+      if (content) {
+        // Small delay to ensure markdown is rendered
+        setTimeout(() => {
+          this.parseToc(content);
+        }, 200);
+      }
+    });
+
+    // Setup scroll listener for reading progress (only in browser)
+    afterNextRender(() => {
+      if (isPlatformBrowser(this.platformId)) {
+        this.setupScrollListener();
+      }
+    });
+
     // Increment view counter (only in browser, not during SSR/prerender)
     afterNextRender(() => {
       const currentSlug = this.slug();
@@ -564,5 +645,50 @@ export class PostDetailComponent {
           });
       }
     });
+  }
+
+  // Parse Table of Contents from markdown content
+  private parseToc(content: string): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const items: TocItem[] = [];
+    const headers = document.querySelectorAll('.prose h2, .prose h3');
+
+    headers.forEach((header) => {
+      const level = header.tagName === 'H2' ? 2 : 3;
+      const text = header.textContent?.trim() || '';
+
+      // Generate ID if not present
+      if (!header.id) {
+        header.id = text.toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '');
+      }
+
+      items.push({
+        id: header.id,
+        text: text,
+        level: level
+      });
+    });
+
+    this.tocItems.set(items);
+  }
+
+  // Setup scroll listener for reading progress bar
+  private setupScrollListener(): void {
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      const scrollableDistance = documentHeight - windowHeight;
+      const progress = (scrollTop / scrollableDistance) * 100;
+
+      this.readingProgress.set(Math.min(Math.max(progress, 0), 100));
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial calculation
   }
 }

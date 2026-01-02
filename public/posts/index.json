@@ -1,5 +1,20 @@
 [
   {
+    "id": "markdown-features-showcase",
+    "slug": "markdown-features-showcase",
+    "title": "Markdown Features Showcase: Admonitions & Code Blocks",
+    "summary": "Explore the latest Markdown enhancements including GitHub-style admonitions and Mac-style code blocks for a premium reading experience.",
+    "date": "2026-01-02T15:10:00.000Z",
+    "coverImage": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=630&fit=crop",
+    "author": "Claude Code",
+    "tags": [
+      "Markdown",
+      "Web Design",
+      "Tutorial"
+    ],
+    "fileName": "2026-01-02-markdown-features-showcase.md"
+  },
+  {
     "id": "deep-dive-angular-signals",
     "slug": "deep-dive-angular-signals",
     "title": "Deep Dive into Angular Signals",

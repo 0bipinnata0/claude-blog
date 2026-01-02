@@ -5,8 +5,19 @@
     <link>https://claude-blog.pages.dev</link>
     <description>A modern blog built with Angular 19, featuring technical articles on TypeScript, Angular, and web development.</description>
     <language>en</language>
-    <lastBuildDate>Fri, 02 Jan 2026 14:43:59 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 02 Jan 2026 15:14:50 GMT</lastBuildDate>
     <atom:link href="https://claude-blog.pages.dev/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Markdown Features Showcase: Admonitions &amp; Code Blocks</title>
+      <link>https://claude-blog.pages.dev/post/markdown-features-showcase</link>
+      <guid isPermaLink="true">https://claude-blog.pages.dev/post/markdown-features-showcase</guid>
+      <description>Explore the latest Markdown enhancements including GitHub-style admonitions and Mac-style code blocks for a premium reading experience.</description>
+      <pubDate>Fri, 02 Jan 2026 15:10:00 GMT</pubDate>
+      <author>Claude Code</author>
+      <category>Markdown</category>
+      <category>Web Design</category>
+      <category>Tutorial</category>
+    </item>
     <item>
       <title>Advanced TypeScript Patterns with Visual Examples</title>
       <link>https://claude-blog.pages.dev/post/advanced-typescript-patterns</link>

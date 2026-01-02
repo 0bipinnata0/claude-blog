@@ -7,6 +7,9 @@ import { IMAGE_LOADER, ImageLoaderConfig } from '@angular/common';
 
 import { routes } from './app.routes';
 
+// Import configured marked instance
+import './utils/markdown-config';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
