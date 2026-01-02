@@ -20,6 +20,9 @@ import { MatIconModule } from '@angular/material/icon';
         </div>
 
         <div class="footer-section social-links">
+          <a href="/feed.xml" target="_blank" rel="noopener" aria-label="RSS Feed">
+            <mat-icon>rss_feed</mat-icon>
+          </a>
           <a href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub">
             <mat-icon>code</mat-icon>
           </a>

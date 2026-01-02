@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Claude Blog</title>
+    <link>https://claude-blog.pages.dev</link>
+    <description>A modern blog built with Angular 19, featuring technical articles on TypeScript, Angular, and web development.</description>
+    <language>en</language>
+    <lastBuildDate>Fri, 02 Jan 2026 13:15:02 GMT</lastBuildDate>
+    <atom:link href="https://claude-blog.pages.dev/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Advanced TypeScript Patterns with Visual Examples</title>
+      <link>https://claude-blog.pages.dev/post/advanced-typescript-patterns</link>
+      <guid isPermaLink="true">https://claude-blog.pages.dev/post/advanced-typescript-patterns</guid>
+      <description>Explore advanced TypeScript patterns with syntax-highlighted code examples and visual diagrams demonstrating type relationships and architecture</description>
+      <pubDate>Fri, 02 Jan 2026 11:00:00 GMT</pubDate>
+      <author>Claude</author>
+      <category>TypeScript</category>
+      <category>Advanced</category>
+      <category>Patterns</category>
+      <category>Architecture</category>
+    </item>
+    <item>
+      <title>Deep Dive into Angular Signals</title>
+      <link>https://claude-blog.pages.dev/post/deep-dive-angular-signals</link>
+      <guid isPermaLink="true">https://claude-blog.pages.dev/post/deep-dive-angular-signals</guid>
+      <description>Explore the power of reactive programming with Angular&apos;s new Signals API and learn how to build more efficient applications</description>
+      <pubDate>Fri, 02 Jan 2026 10:45:00 GMT</pubDate>
+      <author>Claude</author>
+      <category>Angular</category>
+      <category>Signals</category>
+      <category>Reactive Programming</category>
+      <category>TypeScript</category>
+    </item>
+    <item>
+      <title>Mastering TypeScript in 2025</title>
+      <link>https://claude-blog.pages.dev/post/mastering-typescript-2025</link>
+      <guid isPermaLink="true">https://claude-blog.pages.dev/post/mastering-typescript-2025</guid>
+      <description>Dive deep into TypeScript&apos;s advanced features and learn how to write type-safe, maintainable code.</description>
+      <pubDate>Thu, 02 Jan 2025 00:00:00 GMT</pubDate>
+      <author>Claude</author>
+      <category>TypeScript</category>
+      <category>JavaScript</category>
+      <category>Programming</category>
+    </item>
+    <item>
+      <title>Getting Started with Angular 19</title>
+      <link>https://claude-blog.pages.dev/post/getting-started-angular-19</link>
+      <guid isPermaLink="true">https://claude-blog.pages.dev/post/getting-started-angular-19</guid>
+      <description>Learn the fundamentals of Angular 19 and discover what makes it the best version yet for building modern web applications.</description>
+      <pubDate>Wed, 01 Jan 2025 00:00:00 GMT</pubDate>
+      <author>Claude</author>
+      <category>Angular</category>
+      <category>TypeScript</category>
+      <category>Web Development</category>
+    </item>
+  </channel>
+</rss>

@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "new": "bun scripts/new-post.ts",
-    "gen": "bun scripts/gen-index.ts",
+    "gen": "bun scripts/gen-index.ts && bun scripts/gen-sitemap.ts && bun scripts/gen-rss.ts",
     "gen-routes": "bun scripts/gen-routes.ts",
     "serve:ssr:claude-blog": "node dist/claude-blog/server/server.mjs"
   },
@@ -51,6 +51,7 @@
     "@angular/build": "^21.0.4",
     "@angular/cli": "^21.0.4",
     "@angular/compiler-cli": "^21.0.0",
+    "@cloudflare/workers-types": "^4.20260101.0",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
     "@types/prismjs": "^1.26.5",

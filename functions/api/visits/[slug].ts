@@ -20,7 +20,7 @@ async function incrementViewCount(kv: KVNamespace, slug: string): Promise<number
 }
 
 // Handle GET requests - Return current view count
-export async function onRequestGet(context: EventContext<Env, "slug", unknown>) {
+export const onRequestGet: PagesFunction<Env> = async (context) => {
   try {
     const { slug } = context.params;
     const kv = context.env.BLOG_VIEWS;
@@ -51,10 +51,10 @@ export async function onRequestGet(context: EventContext<Env, "slug", unknown>) 
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
-}
+};
 
 // Handle POST requests - Increment and return new view count
-export async function onRequestPost(context: EventContext<Env, "slug", unknown>) {
+export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const { slug } = context.params;
     const kv = context.env.BLOG_VIEWS;
@@ -85,10 +85,10 @@ export async function onRequestPost(context: EventContext<Env, "slug", unknown>)
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
-}
+};
 
 // Handle OPTIONS requests for CORS preflight
-export async function onRequestOptions() {
+export const onRequestOptions: PagesFunction = async () => {
   return new Response(null, {
     status: 204,
     headers: {
@@ -97,4 +97,4 @@ export async function onRequestOptions() {
       'Access-Control-Allow-Headers': 'Content-Type',
     },
   });
-}
+};
