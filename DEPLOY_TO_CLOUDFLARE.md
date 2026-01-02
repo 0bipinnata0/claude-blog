@@ -243,6 +243,135 @@ To see your view counts:
 2. Click **View** to see all post slugs and their view counts
 3. You can manually edit or delete entries if needed
 
+## GitHub OAuth Authentication & Like System
+
+Your blog includes a complete authentication system powered by GitHub OAuth, enabling users to like posts. After deployment, you need to configure the OAuth app and environment variables.
+
+### Step 1: Create GitHub OAuth App
+
+1. Go to GitHub Settings: https://github.com/settings/developers
+2. Click **OAuth Apps** in the left sidebar
+3. Click **New OAuth App**
+4. Fill in the application details:
+   - **Application name**: `Claude Blog` (or your blog name)
+   - **Homepage URL**: `https://your-blog.pages.dev` (your Cloudflare Pages URL)
+   - **Authorization callback URL**: `https://your-blog.pages.dev/api/auth/callback`
+   - **Application description**: (optional) "OAuth authentication for blog likes"
+5. Click **Register application**
+6. On the next page, note your **Client ID**
+7. Click **Generate a new client secret** and copy the **Client Secret** immediately (you won't be able to see it again)
+
+### Step 2: Create Another KV Namespace for Likes
+
+1. In Cloudflare dashboard, go to **Workers & Pages** > **KV**
+2. Click **Create namespace**
+3. Name it: `BLOG_LIKES`
+4. Click **Add**
+
+### Step 3: Configure Environment Variables
+
+1. Go to your Pages project: **Workers & Pages** > Your Project
+2. Click **Settings** tab
+3. Scroll to **Environment variables** section
+4. Add the following variables for **Production** environment:
+
+   | Variable Name | Value | Note |
+   |--------------|-------|------|
+   | `GITHUB_CLIENT_ID` | Your GitHub OAuth Client ID | From Step 1 |
+   | `GITHUB_CLIENT_SECRET` | Your GitHub OAuth Client Secret | From Step 1, keep secret! |
+   | `JWT_SECRET` | Generate a random string | Use: `openssl rand -base64 32` |
+
+5. Click **Save** after adding each variable
+
+### Step 4: Bind KV Namespaces
+
+1. Still in **Settings** > **Functions**
+2. Under **KV namespace bindings**, add BOTH bindings:
+
+   **Binding 1:**
+   - **Variable name**: `BLOG_VIEWS`
+   - **KV namespace**: `BLOG_VIEWS`
+
+   **Binding 2:**
+   - **Variable name**: `BLOG_LIKES`
+   - **KV namespace**: `BLOG_LIKES`
+
+3. Click **Save**
+
+### Step 5: Redeploy
+
+1. Go to **Deployments** tab
+2. Click **Retry deployment** on the latest deployment
+3. Wait for build to complete
+
+### How Authentication Works
+
+**Login Flow:**
+1. User clicks "Login with GitHub" in the navbar
+2. Redirects to GitHub OAuth authorization page
+3. User approves access (read:user scope only)
+4. GitHub redirects back to `/api/auth/callback`
+5. Edge function exchanges code for access token
+6. Fetches user profile and creates JWT
+7. Sets HttpOnly cookie and redirects to homepage
+8. User avatar and name appear in navbar
+
+**Like System:**
+1. Authenticated users can click the heart button on posts
+2. Click again to unlike (toggle behavior)
+3. Like count is stored in `BLOG_LIKES` KV namespace
+4. Each user can only like once per post (enforced by userId)
+5. Likes persist across sessions and devices
+6. Heart button shows filled (red) when liked, outline when not liked
+
+**Security Features:**
+- HttpOnly cookies prevent XSS attacks
+- JWT signed with secret key
+- CSRF protection with state parameter
+- User data stored in encrypted JWT
+- No passwords stored (OAuth delegation)
+
+### Viewing Like Statistics
+
+To see like data:
+1. Go to **Workers & Pages** > **KV** > **BLOG_LIKES**
+2. You'll see two types of keys:
+   - `likes:[slug]` - Total like count for a post
+   - `like:[slug]:[userId]` - Individual user's like status
+3. You can manually adjust counts if needed
+
+### Testing Authentication
+
+1. Visit your deployed blog
+2. Click **Login with GitHub** in the navbar
+3. Authorize the OAuth app
+4. You should be redirected back and see your avatar
+5. Open any blog post
+6. Click the heart button to like
+7. Refresh the page - your like should persist
+8. Click the heart again to unlike
+
+### Troubleshooting Auth
+
+**Error: "Invalid OAuth callback"**
+- Check that callback URL in GitHub OAuth app matches exactly: `https://your-domain.pages.dev/api/auth/callback`
+- Ensure no trailing slashes
+
+**Error: "Unauthorized" when liking**
+- Verify JWT_SECRET is set in environment variables
+- Check that auth_token cookie is being set (DevTools > Application > Cookies)
+- Ensure BLOG_LIKES KV binding is configured correctly
+
+**Error: Logout doesn't work**
+- Clear browser cookies manually
+- Check browser console for errors
+- Verify `/api/auth/logout` endpoint is accessible
+
+**Login button doesn't appear**
+- Check browser console for errors
+- Verify AuthService is properly injected
+- Ensure GITHUB_CLIENT_ID environment variable is set
+
 ## Support
 
 - **Cloudflare Pages Docs**: https://developers.cloudflare.com/pages/
@@ -255,5 +384,5 @@ To see your view counts:
 **Last Updated**: 2026-01-02
 **Angular Version**: 21.0.0
 **Build System**: @angular/build (application builder)
-**Features**: SSG, Search, Comments, Serverless View Counter
+**Features**: SSG, Search, Comments, Serverless View Counter, GitHub OAuth Authentication, Like System
 

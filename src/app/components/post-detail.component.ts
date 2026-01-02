@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BlogService } from '../services/blog.service';
 import { SeoService } from '../services/seo.service';
+import { AuthService } from '../services/auth.service';
 import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -46,6 +47,20 @@ import { CommentsComponent, GiscusConfig } from './comments.component';
                   <span class="meta-item">
                     <mat-icon>visibility</mat-icon>
                     {{ views() }} views
+                  </span>
+                }
+                <button
+                  mat-mini-fab
+                  [color]="hasLiked() ? 'warn' : 'accent'"
+                  (click)="toggleLike()"
+                  [disabled]="likesLoading()"
+                  class="like-button"
+                  [attr.aria-label]="hasLiked() ? 'Unlike this post' : 'Like this post'">
+                  <mat-icon>{{ hasLiked() ? 'favorite' : 'favorite_border' }}</mat-icon>
+                </button>
+                @if (likes() > 0) {
+                  <span class="meta-item">
+                    {{ likes() }} {{ likes() === 1 ? 'like' : 'likes' }}
                   </span>
                 }
               </div>
@@ -157,6 +172,29 @@ import { CommentsComponent, GiscusConfig } from './comments.component';
       font-size: 18px;
       width: 18px;
       height: 18px;
+    }
+
+    .like-button {
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+
+    .like-button:hover {
+      transform: scale(1.1);
+    }
+
+    .like-button:active {
+      transform: scale(0.95);
+    }
+
+    .like-button mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
     }
 
     .summary {
@@ -342,9 +380,47 @@ export class PostDetailComponent {
   private blogService = inject(BlogService);
   private seoService = inject(SeoService);
   private http = inject(HttpClient);
+  authService = inject(AuthService);
+
+  // Strictly typed input signal for slug
+  slug = input.required<string>();
 
   // View counter signal
   views = signal<number>(0);
+
+  // Like counter with real API backend
+  likes = signal<number>(0);
+  hasLiked = signal<boolean>(false);
+  likesLoading = signal<boolean>(false);
+
+  // Toggle like (requires authentication)
+  toggleLike() {
+    if (!this.authService.isAuthenticated()) {
+      // Redirect to login if not authenticated
+      this.authService.login();
+      return;
+    }
+
+    if (this.likesLoading()) {
+      return; // Prevent double-click
+    }
+
+    this.likesLoading.set(true);
+    const currentSlug = this.slug();
+
+    this.http.post<{ likes: number; hasLiked: boolean }>(`/api/likes/${currentSlug}`, {})
+      .subscribe({
+        next: (response) => {
+          this.likes.set(response.likes);
+          this.hasLiked.set(response.hasLiked);
+          this.likesLoading.set(false);
+        },
+        error: (error) => {
+          console.error('Failed to toggle like:', error);
+          this.likesLoading.set(false);
+        }
+      });
+  }
 
   // Giscus configuration
   // Configured with repository: 0bipinnata0/claude-blog
@@ -360,9 +436,6 @@ export class PostDetailComponent {
     lang: 'en',
     loading: 'lazy'
   };
-
-  // Strictly typed input signal for slug
-  slug = input.required<string>();
 
   // Computed signal to fetch post metadata based on slug
   post = computed(() => {
@@ -417,6 +490,7 @@ export class PostDetailComponent {
     afterNextRender(() => {
       const currentSlug = this.slug();
       if (currentSlug) {
+        // Increment view counter
         this.http.post<{ views: number }>(`/api/visits/${currentSlug}`, {})
           .subscribe({
             next: (response) => {
@@ -425,6 +499,19 @@ export class PostDetailComponent {
             error: (error) => {
               console.error('Failed to increment view count:', error);
               // Silently fail - don't show error to user
+            }
+          });
+
+        // Load like count and user's like status
+        this.http.get<{ likes: number; hasLiked: boolean }>(`/api/likes/${currentSlug}`)
+          .subscribe({
+            next: (response) => {
+              this.likes.set(response.likes);
+              this.hasLiked.set(response.hasLiked);
+            },
+            error: (error) => {
+              console.error('Failed to load like data:', error);
+              // Silently fail
             }
           });
       }
