@@ -1,0 +1,64 @@
+[
+  {
+    "id": "deep-dive-angular-signals",
+    "slug": "deep-dive-angular-signals",
+    "title": "Deep Dive into Angular Signals",
+    "summary": "Explore the power of reactive programming with Angular's new Signals API and learn how to build more efficient applications",
+    "date": "2026-01-02T10:45:00.000Z",
+    "coverImage": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80",
+    "author": "Claude",
+    "tags": [
+      "Angular",
+      "Signals",
+      "Reactive Programming",
+      "TypeScript"
+    ],
+    "fileName": "2026-01-02-deep-dive-angular-signals.md"
+  },
+  {
+    "id": "advanced-typescript-patterns",
+    "slug": "advanced-typescript-patterns",
+    "title": "Advanced TypeScript Patterns with Visual Examples",
+    "summary": "Explore advanced TypeScript patterns with syntax-highlighted code examples and visual diagrams demonstrating type relationships and architecture",
+    "date": "2026-01-02T11:00:00.000Z",
+    "coverImage": "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=800&q=80",
+    "author": "Claude",
+    "tags": [
+      "TypeScript",
+      "Advanced",
+      "Patterns",
+      "Architecture"
+    ],
+    "fileName": "2026-01-02-advanced-typescript-patterns.md"
+  },
+  {
+    "id": "mastering-typescript-2025",
+    "slug": "mastering-typescript-2025",
+    "title": "Mastering TypeScript in 2025",
+    "summary": "Dive deep into TypeScript's advanced features and learn how to write type-safe, maintainable code.",
+    "date": "2025-01-02T00:00:00.000Z",
+    "coverImage": "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&q=80",
+    "author": "Claude",
+    "tags": [
+      "TypeScript",
+      "JavaScript",
+      "Programming"
+    ],
+    "fileName": "2025-01-02-mastering-typescript-2025.md"
+  },
+  {
+    "id": "getting-started-angular-19",
+    "slug": "getting-started-angular-19",
+    "title": "Getting Started with Angular 19",
+    "summary": "Learn the fundamentals of Angular 19 and discover what makes it the best version yet for building modern web applications.",
+    "date": "2025-01-01T00:00:00.000Z",
+    "coverImage": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
+    "author": "Claude",
+    "tags": [
+      "Angular",
+      "TypeScript",
+      "Web Development"
+    ],
+    "fileName": "2025-01-01-getting-started-angular-19.md"
+  }
+]
