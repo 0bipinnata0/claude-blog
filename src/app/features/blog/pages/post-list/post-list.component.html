@@ -4,8 +4,17 @@
         <p class="subtitle">Insights on Angular, Material Design, and modern web development</p>
     </div>
 
-    <div class="bento-grid">
-        @for (post of blogService.posts(); track post.id; let idx = $index) {
+    <!-- Category Switcher -->
+    <div class="category-tabs" appTabs [selectedValue]="selectedTag()" (selectedValueChange)="selectedTag.set($event)">
+        @for (tag of tags(); track tag) {
+        <button appTab [value]="tag" class="tab-button" (click)="selectedTag.set(tag)">
+            {{ tag }}
+        </button>
+        }
+    </div>
+
+    <div class="bento-grid" appTabPanel>
+        @for (post of filteredPosts(); track post.id; let idx = $index) {
         <a appSpotlight [routerLink]="['/post', post.slug]" class="bento-card" [class.featured]="idx === 0"
             [class.wide]="idx > 0 && (idx + 1) % 4 === 0" [style.view-transition-name]="'card-' + post.slug">
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { NavbarComponent } from './navbar.component';
 import { FooterComponent } from './footer.component';
 
@@ -7,6 +7,7 @@ import { FooterComponent } from './footer.component';
   standalone: true,
   imports: [NavbarComponent, FooterComponent],
   templateUrl: './main-layout.component.html',
-  styleUrls: ['./main-layout.component.scss']
+  styleUrls: ['./main-layout.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainLayoutComponent { }

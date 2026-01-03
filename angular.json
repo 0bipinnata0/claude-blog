@@ -101,7 +101,8 @@
               "buildTarget": "claude-blog:build:production"
             },
             "development": {
-              "buildTarget": "claude-blog:build:development"
+              "buildTarget": "claude-blog:build:development",
+              "hmr": false
             }
           },
           "defaultConfiguration": "development"

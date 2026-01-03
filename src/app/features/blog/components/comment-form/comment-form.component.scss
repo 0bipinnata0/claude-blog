@@ -1,0 +1,53 @@
+.comment-form-container {
+    padding: 24px;
+    background: v-bind('layout() === "compact" ? "transparent" : "var(--mat-sys-surface-container-low)"');
+    border-radius: 16px;
+    border: 1px solid var(--mat-sys-outline-variant);
+
+    h3 {
+        margin-top: 0;
+        margin-bottom: 24px;
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 4px;
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+.half-width {
+    flex: 1;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

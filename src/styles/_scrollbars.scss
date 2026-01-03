@@ -1,0 +1,17 @@
+/* Custom scrollbar for better appearance */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--mat-sys-surface-container);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--mat-sys-outline-variant);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--mat-sys-outline);
+}

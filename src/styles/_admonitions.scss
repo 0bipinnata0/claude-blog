@@ -1,0 +1,76 @@
+/* GitHub-style Admonitions */
+.admonition {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    border-left: 4px solid;
+    background: color-mix(in srgb, var(--admonition-color) 8%, transparent);
+    border-color: var(--admonition-color);
+}
+
+.admonition-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--admonition-color);
+}
+
+.admonition-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.admonition-label {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.admonition-content {
+    color: var(--mat-sys-on-surface);
+    line-height: 1.6;
+}
+
+.admonition-content :first-child {
+    margin-top: 0;
+}
+
+.admonition-content :last-child {
+    margin-bottom: 0;
+}
+
+/* Note - Blue */
+.admonition-note {
+    --admonition-color: #2196f3;
+}
+
+/* Tip - Green */
+.admonition-tip {
+    --admonition-color: #4caf50;
+}
+
+/* Warning - Yellow/Orange */
+.admonition-warning {
+    --admonition-color: #ff9800;
+}
+
+/* Important - Purple */
+.admonition-important {
+    --admonition-color: #9c27b0;
+}
+
+/* Caution - Red */
+.admonition-caution {
+    --admonition-color: #f44336;
+}
+
+/* Dark mode adjustments for admonitions */
+html.dark .admonition {
+    background: color-mix(in srgb, var(--admonition-color) 15%, transparent);
+}
+
+html.dark .admonition-content {
+    color: var(--mat-sys-on-surface);
+}

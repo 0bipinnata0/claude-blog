@@ -1,0 +1,78 @@
+/* Spotlight Effect - Border Reveal (Mainstream/Linear Style) */
+[appSpotlight] {
+    position: relative;
+    /* Ensure hardware acceleration */
+    transform: translateZ(0);
+}
+
+/* 1. Inner Surface Spotlight (Subtle sheen over content) */
+[appSpotlight]::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    /* Sits above card background but below border */
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: 0;
+
+    background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(255, 255, 255, 0.04),
+            transparent 40%);
+
+    transition: opacity 0.3s ease;
+}
+
+/* 2. Border Reveal (The main effect) */
+[appSpotlight]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    /* Topmost layer */
+    pointer-events: none;
+    border-radius: inherit;
+    /* Follows the card's border radius (24px) */
+    opacity: 0;
+
+    /* The Border Width controlled by padding */
+    padding: 1.5px;
+
+    /* The Spotlight Gradient */
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(255, 255, 255, 0.8),
+            transparent 40%);
+
+    /* Mask magic to only show the border area */
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+
+    transition: opacity 0.3s ease;
+}
+
+[appSpotlight]:hover::before,
+[appSpotlight]:hover::after {
+    opacity: 1;
+}
+
+/* Dark mode adjustments */
+html.dark [appSpotlight]::before {
+    background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(255, 255, 255, 0.06),
+            transparent 40%);
+}
+
+html.dark [appSpotlight]::after {
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(255, 255, 255, 0.9),
+            transparent 40%);
+}
+
+/* Adjust z-index of children if needed, but the overlay approach works well */

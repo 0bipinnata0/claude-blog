@@ -4,8 +4,10 @@
         <span>Claude Blog</span>
     </a>
     <span class="spacer"></span>
-    <a mat-button [routerLink]="['/']">Home</a>
-    <a mat-button href="#">About</a>
+    <nav class="nav-menu" cdkMenuBar>
+        <a mat-button [routerLink]="['/']" cdkMenuItem>Home</a>
+        <a mat-button href="#" cdkMenuItem>About</a>
+    </nav>
     <button mat-icon-button (click)="openSearch()" matTooltip="Search (Cmd+K)" aria-label="Open search">
         <mat-icon>search</mat-icon>
     </button>

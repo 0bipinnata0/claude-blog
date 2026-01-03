@@ -1,5 +1,5 @@
 <!-- Reading Progress Bar -->
-<div class="reading-progress" [style.width.%]="readingProgress()"></div>
+<app-reading-progress />
 
 <div class="container">
     <a mat-button [routerLink]="['/']" class="back-button">
@@ -22,18 +22,27 @@
             <!-- Grid Layout: Content + TOC -->
             <div class="content-grid">
                 <!-- Main Content -->
-                <app-post-detail-content [content]="postContent()" [isLoading]="postContentResource.isLoading()">
+                <app-post-detail-content [content]="postContent()" [isLoading]="postContentResource.isLoading()"
+                    (tocFound)="tocItems.set($event)">
                 </app-post-detail-content>
 
                 <!-- Table of Contents (Desktop Only) -->
                 @if (tocItems().length > 0) {
+                @defer (on viewport) {
                 <aside class="toc-sidebar">
                     <app-table-of-contents [items]="tocItems()" />
                 </aside>
+                } @placeholder {
+                <aside class="toc-sidebar">Loading TOC...</aside>
+                }
                 }
             </div>
 
+            @defer (on viewport) {
             <app-comments [config]="giscusConfig"></app-comments>
+            } @placeholder {
+            <div class="comments-placeholder">Loading comments...</div>
+            }
         </mat-card-content>
     </mat-card>
     } @else {

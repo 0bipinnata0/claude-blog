@@ -1,4 +1,4 @@
-import { Component, inject, HostListener } from '@angular/core';
+import { Component, inject, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
+import { CdkMenuModule } from '@angular/cdk/menu';
 import { ThemeService } from '../services/theme.service';
 import { AuthService } from '../services/auth.service';
 import { SearchModalComponent } from '../../shared/components/search-modal/search-modal.component';
@@ -13,9 +14,10 @@ import { SearchModalComponent } from '../../shared/components/search-modal/searc
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, MatToolbarModule, MatButtonModule, MatIconModule, MatTooltipModule, MatMenuModule],
+  imports: [RouterLink, MatToolbarModule, MatButtonModule, MatIconModule, MatTooltipModule, MatMenuModule, CdkMenuModule],
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarComponent {
   themeService = inject(ThemeService);

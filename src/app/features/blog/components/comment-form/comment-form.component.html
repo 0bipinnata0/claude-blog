@@ -1,0 +1,43 @@
+<div class="comment-form-container" [class.compact]="layout() === 'compact'">
+    <h3>Leave a Comment</h3>
+
+    <form (submit)="onSubmit(); $event.preventDefault()">
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Name</mat-label>
+                <input matInput type="text" [field]="commentForm.name" placeholder="John Doe">
+                @if (commentForm.name().touched() && commentForm.name().invalid()) {
+                <mat-error>Name is required</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" [field]="commentForm.email" placeholder="john@example.com">
+                @if (commentForm.email().touched() && commentForm.email().invalid()) {
+                <mat-error>Valid email is required</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Comment</mat-label>
+            <textarea matInput [field]="commentForm.content" rows="4" placeholder="Share your thoughts..."></textarea>
+            @if (commentForm.content().touched() && commentForm.content().invalid()) {
+            <mat-error>Comment cannot be empty</mat-error>
+            }
+        </mat-form-field>
+
+        <div class="form-actions">
+            <button mat-flat-button color="primary" type="submit"
+                [disabled]="commentForm().invalid() || isSubmitting()">
+                @if (isSubmitting()) {
+                <mat-icon class="spin">refresh</mat-icon>
+                Posting...
+                } @else {
+                Post Comment
+                }
+            </button>
+        </div>
+    </form>
+</div>

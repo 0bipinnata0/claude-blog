@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MainLayoutComponent } from './core/layout/main-layout.component';
 
@@ -6,6 +6,7 @@ import { MainLayoutComponent } from './core/layout/main-layout.component';
   selector: 'app-root',
   imports: [RouterOutlet, MainLayoutComponent],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App { }

@@ -1,7 +1,6 @@
-import { Component, inject, input, computed, effect, signal, afterNextRender, resource, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Component, inject, input, computed, effect, signal, afterNextRender, resource, ChangeDetectionStrategy } from '@angular/core';
+
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { BlogService } from '../../../../core/services/blog.service';
 import { SeoService } from '../../../../core/services/seo.service';
 import { InteractionService } from '../../../../core/services/interaction.service';
@@ -15,6 +14,7 @@ import { CommentsComponent, GiscusConfig } from '../../../../shared/components/c
 import { TableOfContentsComponent, TocItem } from '../../../../shared/components/table-of-contents/table-of-contents.component';
 import { PostDetailHeaderComponent } from '../../components/post-detail-header/post-detail-header.component';
 import { PostDetailContentComponent } from '../../components/post-detail-content/post-detail-content.component';
+import { ReadingProgressComponent } from '../../../../shared/components/reading-progress/reading-progress.component';
 import { BlogPost } from '../../../../shared/models/post.model';
 
 interface PostMetadata {
@@ -43,24 +43,21 @@ interface PostMetadata {
     CommentsComponent,
     TableOfContentsComponent,
     PostDetailHeaderComponent,
-    PostDetailContentComponent
+    PostDetailContentComponent,
+    ReadingProgressComponent
   ],
   templateUrl: './post-detail.component.html',
-  styleUrls: ['./post-detail.component.scss']
+  styleUrls: ['./post-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PostDetailComponent {
   private blogService = inject(BlogService);
   private seoService = inject(SeoService);
   private interactionService = inject(InteractionService);
-  private http = inject(HttpClient);
-  private platformId = inject(PLATFORM_ID);
   authService = inject(AuthService);
 
   // Strictly typed input signal for slug
   slug = input.required<string>();
-
-  // Reading progress signal (0-100)
-  readingProgress = signal<number>(0);
 
   // Table of Contents items
   tocItems = signal<TocItem[]>([]);
@@ -126,23 +123,9 @@ export class PostDetailComponent {
       }
     });
 
-    // Parse TOC from markdown content
-    effect(() => {
-      const content = this.postContent();
-      if (content) {
-        // Small delay to ensure markdown is rendered
-        setTimeout(() => {
-          this.parseToc(content);
-        }, 200);
-      }
-    });
 
-    // Setup scroll listener for reading progress (only in browser)
-    afterNextRender(() => {
-      if (isPlatformBrowser(this.platformId)) {
-        this.setupScrollListener();
-      }
-    });
+
+
 
     // Increment view counter and load likes
     afterNextRender(() => {
@@ -154,48 +137,7 @@ export class PostDetailComponent {
     });
   }
 
-  // Parse Table of Contents from markdown content
-  private parseToc(content: string): void {
-    if (!isPlatformBrowser(this.platformId)) return;
 
-    const items: TocItem[] = [];
-    const headers = document.querySelectorAll('.prose h2, .prose h3');
 
-    headers.forEach((header) => {
-      const level = header.tagName === 'H2' ? 2 : 3;
-      const text = header.textContent?.trim() || '';
 
-      // Generate ID if not present
-      if (!header.id) {
-        header.id = text.toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/^-|-$/g, '');
-      }
-
-      items.push({
-        id: header.id,
-        text: text,
-        level: level
-      });
-    });
-
-    this.tocItems.set(items);
-  }
-
-  // Setup scroll listener for reading progress bar
-  private setupScrollListener(): void {
-    const handleScroll = () => {
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-      const scrollableDistance = documentHeight - windowHeight;
-      const progress = (scrollTop / scrollableDistance) * 100;
-
-      this.readingProgress.set(Math.min(Math.max(progress, 0), 100));
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial calculation
-  }
 }

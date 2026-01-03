@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect, HostListener } from '@angular/core';
+import { Component, inject, signal, effect, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -25,7 +25,8 @@ import { BlogPost } from '../../models/post.model';
     MatListModule,
   ],
   templateUrl: './search-modal.component.html',
-  styleUrls: ['./search-modal.component.scss']
+  styleUrls: ['./search-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchModalComponent {
   private blogService = inject(BlogService);

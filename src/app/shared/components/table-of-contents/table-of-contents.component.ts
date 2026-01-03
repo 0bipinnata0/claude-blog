@@ -1,4 +1,4 @@
-import { Component, input, signal, effect, PLATFORM_ID, inject, afterNextRender } from '@angular/core';
+import { Component, input, signal, effect, PLATFORM_ID, inject, afterNextRender, ChangeDetectionStrategy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -13,7 +13,8 @@ export interface TocItem {
   standalone: true,
   imports: [MatIconModule],
   templateUrl: './table-of-contents.component.html',
-  styleUrls: ['./table-of-contents.component.scss']
+  styleUrls: ['./table-of-contents.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableOfContentsComponent {
   items = input.required<TocItem[]>();

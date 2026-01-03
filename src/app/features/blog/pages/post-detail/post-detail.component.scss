@@ -1,17 +1,3 @@
-/* Reading Progress Bar */
-.reading-progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 4px;
-    background: linear-gradient(90deg,
-            var(--mat-sys-primary),
-            var(--mat-sys-tertiary));
-    z-index: 1000;
-    transition: width 0.1s ease-out;
-    box-shadow: 0 2px 8px color-mix(in srgb, var(--mat-sys-primary) 40%, transparent);
-}
-
 .container {
     max-width: 1200px;
     margin: 0 auto;

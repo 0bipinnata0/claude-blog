@@ -1,4 +1,4 @@
-import { Component, input, effect, inject, PLATFORM_ID, signal, ElementRef, OnDestroy } from '@angular/core';
+import { Component, input, effect, inject, PLATFORM_ID, signal, ElementRef, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ThemeService } from '../../../core/services/theme.service';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,7 +22,8 @@ export interface GiscusConfig {
   standalone: true,
   imports: [MatIconModule, MatButtonModule],
   templateUrl: './comments.component.html',
-  styleUrls: ['./comments.component.scss']
+  styleUrls: ['./comments.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommentsComponent implements OnDestroy {
   config = input.required<GiscusConfig>();

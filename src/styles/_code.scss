@@ -1,0 +1,94 @@
+/* Code block enhancements - Mac-style */
+pre[class*="language-"] {
+    position: relative;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding-top: 3rem !important;
+    /* Space for title bar */
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+/* Mac-style title bar with traffic lights */
+pre[class*="language-"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2.5rem;
+    background: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.02));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px 8px 0 0;
+}
+
+/* Mac traffic light dots */
+pre[class*="language-"]::after {
+    content: '';
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ff5f56;
+    /* Red dot */
+    box-shadow:
+        20px 0 0 #ffbd2e,
+        /* Yellow dot */
+        40px 0 0 #27c93f,
+        /* Green dot */
+        0 0 0 1px rgba(0, 0, 0, 0.1),
+        20px 0 0 1px rgba(0, 0, 0, 0.1),
+        40px 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode adjustments for code blocks */
+html.dark pre[class*="language-"]::before {
+    background: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.03),
+            rgba(255, 255, 255, 0.01));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Copy button styling */
+.markdown-clipboard-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.markdown-clipboard-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.markdown-clipboard-button:active {
+    transform: translateY(0);
+}
+
+/* Mermaid diagram styling */
+.mermaid {
+    background-color: transparent;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+html.dark .mermaid {
+    filter: invert(0.9) hue-rotate(180deg);
+}

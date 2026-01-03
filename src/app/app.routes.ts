@@ -5,10 +5,10 @@ import { PostDetailComponent } from './features/blog/pages/post-detail/post-deta
 export const routes: Routes = [
   {
     path: '',
-    component: PostListComponent
+    loadComponent: () => import('./features/blog/pages/post-list/post-list.component').then(m => m.PostListComponent)
   },
   {
     path: 'post/:slug',
-    component: PostDetailComponent
+    loadComponent: () => import('./features/blog/pages/post-detail/post-detail.component').then(m => m.PostDetailComponent)
   }
 ];

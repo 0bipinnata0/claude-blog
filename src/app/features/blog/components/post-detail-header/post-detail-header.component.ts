@@ -1,4 +1,4 @@
-import { Component, input, inject } from '@angular/core';
+import { Component, input, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,7 +11,8 @@ import { BlogPost } from '../../../../shared/models/post.model';
     standalone: true,
     imports: [DatePipe, MatCardModule, MatButtonModule, MatIconModule],
     templateUrl: './post-detail-header.component.html',
-    styleUrls: ['./post-detail-header.component.scss']
+    styleUrls: ['./post-detail-header.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PostDetailHeaderComponent {
     post = input.required<BlogPost>();
