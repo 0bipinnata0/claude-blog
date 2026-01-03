@@ -32,8 +32,10 @@
             <button mat-flat-button color="primary" type="submit"
                 [disabled]="commentForm().invalid() || isSubmitting()">
                 @if (isSubmitting()) {
-                <mat-icon class="spin">refresh</mat-icon>
-                Posting...
+                <ng-container>
+                    <mat-icon class="spin">refresh</mat-icon>
+                    Posting...
+                </ng-container>
                 } @else {
                 Post Comment
                 }

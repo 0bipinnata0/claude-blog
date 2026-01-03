@@ -30,7 +30,6 @@ export class ReadingProgressComponent {
             const progress = (scrollTop / scrollableDistance) * 100;
 
             this.progress.set(Math.min(Math.max(progress, 0), 100));
-            console.log('Scroll Progress:', progress, 'ScrollTop:', scrollTop, 'Height:', documentHeight);
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });

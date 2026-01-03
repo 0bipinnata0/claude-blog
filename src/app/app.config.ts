@@ -4,6 +4,7 @@ import { provideHttpClient, HttpClient, withFetch } from '@angular/common/http';
 import { provideMarkdown } from 'ngx-markdown';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { IMAGE_LOADER, ImageLoaderConfig } from '@angular/common';
+import { provideContent, withMarkdownRenderer } from '@analogjs/content';
 
 import { routes } from './app.routes';
 
@@ -29,6 +30,7 @@ export const appConfig: ApplicationConfig = {
         return config.src;
       },
     },
-    { provide: BLOG_DATA_SERVICE, useClass: HttpBlogDataService }
+    { provide: BLOG_DATA_SERVICE, useClass: HttpBlogDataService },
+    provideContent(withMarkdownRenderer())
   ]
 };

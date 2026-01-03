@@ -16,13 +16,31 @@ if (!fs.existsSync(POSTS_DIR)) {
   process.exit(1);
 }
 
-// Read all .md files
-const files: string[] = fs.readdirSync(POSTS_DIR)
-  .filter((file: string) => file.endsWith('.md'))
+// Read all .md files and subdirectories with index.md
+const entries = fs.readdirSync(POSTS_DIR, { withFileTypes: true });
+
+const files: string[] = entries
+  .flatMap((entry) => {
+    if (entry.isFile() && entry.name.endsWith('.md')) {
+      return [entry.name];
+    }
+    if (entry.isDirectory()) {
+      const indexMdPath = path.join(POSTS_DIR, entry.name, 'index.md');
+      const indexMdxPath = path.join(POSTS_DIR, entry.name, 'index.mdx');
+
+      if (fs.existsSync(indexMdPath)) {
+        return [`${entry.name}/index.md`];
+      }
+      if (fs.existsSync(indexMdxPath)) {
+        return [`${entry.name}/index.mdx`];
+      }
+    }
+    return [];
+  })
   .sort()
   .reverse(); // Newest first
 
-console.log(`📝 Found ${files.length} markdown file(s)`);
+console.log(`📝 Found ${files.length} post(s)`);
 
 // Parse frontmatter from each file
 const posts: PostMetadata[] = files
@@ -34,7 +52,15 @@ const posts: PostMetadata[] = files
       const { attributes } = fm<PostAttributes>(content);
 
       // Extract slug from filename (remove date prefix and .md extension)
-      const slug = attributes.slug || file.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, '');
+      // For Page Bundles (folder/index.md), use the folder name as the default slug
+      let defaultSlug = file;
+      if (file.endsWith('/index.md') || file.endsWith('/index.mdx')) {
+        defaultSlug = path.dirname(file);
+      } else {
+        defaultSlug = file.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, '');
+      }
+
+      const slug = attributes.slug || defaultSlug;
 
       return {
         id: slug,
@@ -56,7 +82,8 @@ const posts: PostMetadata[] = files
       return null;
     }
   })
-  .filter((post): post is PostMetadata => post !== null);
+  .filter((post): post is PostMetadata => post !== null)
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
 // Write index.json
 fs.writeFileSync(INDEX_FILE, JSON.stringify(posts, null, 2), 'utf8');

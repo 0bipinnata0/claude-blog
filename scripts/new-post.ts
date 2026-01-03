@@ -39,7 +39,7 @@ function slugify(text: string): string {
 
 // Main function
 async function createPost(): Promise<void> {
-  console.log('\n📝 Create New Blog Post\n');
+  console.log('\n📝 Create New Blog Post (Page Bundle)\n');
 
   // Get post title
   const title = await prompt('Post Title: ');
@@ -64,18 +64,21 @@ async function createPost(): Promise<void> {
 
   rl.close();
 
-  // Generate filename
-  const today = new Date();
-  const datePrefix = today.toISOString().split('T')[0]; // YYYY-MM-DD
+  // Generate directory name and path
   const slug = slugify(title);
-  const fileName = `${datePrefix}-${slug}.md`;
-  const filePath = path.join(POSTS_DIR, fileName);
+  const postDir = path.join(POSTS_DIR, slug);
+  const filePath = path.join(postDir, 'index.mdx');
 
-  // Check if file already exists
-  if (fs.existsSync(filePath)) {
-    console.log(`❌ File already exists: ${fileName}`);
+  // Check if directory already exists
+  if (fs.existsSync(postDir)) {
+    console.log(`❌ Directory already exists: ${slug}`);
     process.exit(1);
   }
+
+  // Create directory
+  fs.mkdirSync(postDir, { recursive: true });
+
+  const today = new Date();
 
   // Create frontmatter template
   const frontmatter = `---
@@ -95,6 +98,27 @@ Write your blog post content here using **Markdown** syntax.
 ## Introduction
 
 Start with an engaging introduction that hooks your readers.
+
+> [!NOTE]
+> This is a Page Bundle! You can place images in this folder (e.g., \`./hero.png\`) and reference them directly.
+
+## Features Showcase
+
+### Admonitions
+
+> [!TIP]
+> Use these callouts to highlight important info!
+
+> [!WARNING]
+> Be careful with these configurations.
+
+### Code Blocks
+
+\`\`\`typescript
+// Modern Mac-style code blocks
+const greeting = signal('Hello World');
+effect(() => console.log(greeting()));
+\`\`\`
 
 ## Main Content
 
@@ -119,7 +143,8 @@ Wrap up your post with a compelling conclusion.
   fs.writeFileSync(filePath, frontmatter, 'utf8');
 
   console.log('\n✅ Post created successfully!');
-  console.log(`📄 File: ${fileName}`);
+  console.log(`📂 Directory: public/posts/${slug}/`);
+  console.log(`📄 File: public/posts/${slug}/index.mdx`);
   console.log(`🔗 Slug: ${slug}`);
 
   // Run indexer

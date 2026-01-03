@@ -1,0 +1,27 @@
+
+import { CodeBlock } from '@angular/cdk/scrolling'; // Just mimicking imports if needed, though usually standard markdown is enough.
+
+## The Heavy Core
+
+This section represents the "heavy" part of our documentation. In a real scenario, this might contain:
+
+- Complex interactive diagrams
+- Dozens of code snippets
+- Deeply nested component trees
+
+### Code Sample
+
+\`\`\`typescript
+// Hypothetical complex logic
+function calculateUniverse() {
+  const stars = Array.from({ length: 1e6 }, () => ({
+    x: Math.random(),
+    y: Math.random(),
+    mass: Math.random() * 100
+  }));
+  
+  return stars.reduce((acc, star) => acc + star.mass, 0);
+}
+\`\`\`
+
+By lazy loading this file, we save the initial bundle size!

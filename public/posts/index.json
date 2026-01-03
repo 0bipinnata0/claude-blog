@@ -1,5 +1,59 @@
 [
   {
+    "id": "mdx-splitting-demo",
+    "slug": "mdx-splitting-demo",
+    "title": "Runtime Page Bundle Demo",
+    "summary": "Demonstrating content splitting and local assets in public/posts using runtime injection.",
+    "date": "2026-01-03T01:35:00.000Z",
+    "coverImage": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80",
+    "author": "Claude",
+    "tags": [
+      "Demo",
+      "Architecture"
+    ],
+    "fileName": "mdx-splitting-demo/index.md"
+  },
+  {
+    "id": "mdx-default-ext-test",
+    "slug": "mdx-default-ext-test",
+    "title": "MDX Default Ext Test",
+    "summary": "Testing mdx default",
+    "date": "2026-01-03T01:33:07.995Z",
+    "coverImage": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80",
+    "author": "Claude",
+    "tags": [
+      "mdx",
+      "test",
+      "default"
+    ],
+    "fileName": "mdx-default-ext-test/index.mdx"
+  },
+  {
+    "id": "automated-page-bundle-test",
+    "slug": "automated-page-bundle-test",
+    "title": "Automated Page Bundle Test",
+    "summary": "Testing the new interactive flow",
+    "date": "2026-01-03T01:23:26.681Z",
+    "coverImage": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80",
+    "author": "Claude",
+    "tags": [
+      "automation",
+      "test"
+    ],
+    "fileName": "automated-page-bundle-test/index.md"
+  },
+  {
+    "id": "advanced-architecture-guide",
+    "slug": "advanced-architecture-guide",
+    "title": "Advanced Architecture Guide",
+    "summary": "A demonstration of componentized MDX with AnalogJS and Angular.",
+    "date": "2026-01-03T00:00:00.000Z",
+    "coverImage": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80",
+    "author": "Claude",
+    "tags": [],
+    "fileName": "advanced-architecture-guide/index.mdx"
+  },
+  {
     "id": "markdown-features-showcase",
     "slug": "markdown-features-showcase",
     "title": "Markdown Features Showcase: Admonitions & Code Blocks",
@@ -12,23 +66,7 @@
       "Web Design",
       "Tutorial"
     ],
-    "fileName": "2026-01-02-markdown-features-showcase.md"
-  },
-  {
-    "id": "deep-dive-angular-signals",
-    "slug": "deep-dive-angular-signals",
-    "title": "Deep Dive into Angular Signals",
-    "summary": "Explore the power of reactive programming with Angular's new Signals API and learn how to build more efficient applications",
-    "date": "2026-01-02T10:45:00.000Z",
-    "coverImage": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80",
-    "author": "Claude",
-    "tags": [
-      "Angular",
-      "Signals",
-      "Reactive Programming",
-      "TypeScript"
-    ],
-    "fileName": "2026-01-02-deep-dive-angular-signals.md"
+    "fileName": "markdown-features-showcase/index.md"
   },
   {
     "id": "advanced-typescript-patterns",
@@ -45,6 +83,22 @@
       "Architecture"
     ],
     "fileName": "2026-01-02-advanced-typescript-patterns.md"
+  },
+  {
+    "id": "deep-dive-angular-signals",
+    "slug": "deep-dive-angular-signals",
+    "title": "Deep Dive into Angular Signals",
+    "summary": "Explore the power of reactive programming with Angular's new Signals API and learn how to build more efficient applications",
+    "date": "2026-01-02T10:45:00.000Z",
+    "coverImage": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80",
+    "author": "Claude",
+    "tags": [
+      "Angular",
+      "Signals",
+      "Reactive Programming",
+      "TypeScript"
+    ],
+    "fileName": "2026-01-02-deep-dive-angular-signals.md"
   },
   {
     "id": "mastering-typescript-2025",
@@ -75,5 +129,16 @@
       "Web Development"
     ],
     "fileName": "2025-01-01-getting-started-angular-19.md"
+  },
+  {
+    "id": "first-post",
+    "slug": "first-post",
+    "title": "My First Post",
+    "summary": "This is an example blog post using AnalogJS Content.",
+    "date": "2024-01-01T00:00:00.000Z",
+    "coverImage": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80",
+    "author": "Claude",
+    "tags": [],
+    "fileName": "first-post/index.md"
   }
 ]
